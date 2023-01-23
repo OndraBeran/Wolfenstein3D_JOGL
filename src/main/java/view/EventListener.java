@@ -6,6 +6,9 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 
 public class EventListener implements GLEventListener {
+
+    private double[] rayResult;
+
     @Override
     public void init(GLAutoDrawable glAutoDrawable) {
 
@@ -22,10 +25,20 @@ public class EventListener implements GLEventListener {
 
         gl.glClearColor(0, 0, 0, 1);
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+
+        gl.glBegin(GL2.GL_LINES);
+        gl.glVertex2f(-0.5f, 0.5f);
+        gl.glVertex2f(0.5f, -0.5f);
+        gl.glEnd();
+
     }
 
     @Override
     public void reshape(GLAutoDrawable glAutoDrawable, int x, int y, int width, int height) {
 
+    }
+
+    public void setRayResult(double[] rayResult) {
+        this.rayResult = rayResult;
     }
 }

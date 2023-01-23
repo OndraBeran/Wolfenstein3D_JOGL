@@ -9,23 +9,21 @@ public class Renderer {
 
     private static GLWindow window = null;
 
-    public static void init(){
+    public void init(){
         GLProfile.initSingleton();
         GLProfile profile = GLProfile.get(GLProfile.GL2);
         GLCapabilities caps = new GLCapabilities(profile);
 
         window = GLWindow.create(caps);
         window.setSize(640, 360);
-        window.addGLEventListener(new EventListener());
+        window.setFullscreen(true);
+
+        EventListener listener = new EventListener();
+        window.addGLEventListener(listener);
 
         FPSAnimator animator = new FPSAnimator(window, 60);
         animator.start();
 
         window.setVisible(true);
     }
-
-    public static void main(String[] args) {
-        init();
-    }
-
 }
