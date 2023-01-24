@@ -4,9 +4,6 @@ import model.MainModel;
 import view.Renderer;
 
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 public class Main {
     private final int SCREEN_WIDTH = 1080;
@@ -22,9 +19,8 @@ public class Main {
 
     public static void main(String[] args) {
         Main m = new Main();
-
-        List l = Arrays.asList(ArrayUtils);
-
-        System.out.println(Collections.min(l) + " " + Collections.max(l));
+        System.out.println(Arrays.toString(m.model.castRays()));
+        m.renderer.init(m.SCREEN_WIDTH);
+        m.renderer.getListener().setRayResult(m.model.castRays());
     }
 }

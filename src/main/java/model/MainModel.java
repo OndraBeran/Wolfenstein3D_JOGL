@@ -10,7 +10,7 @@ public class MainModel {
 
     public MainModel(int res, double fov) {
         map = new Map();
-        player = new Player(450, 450, 45);
+        player = new Player(450, 450, 153);
         RESOLUTION = res;
         FOV = fov;
     }
@@ -23,7 +23,10 @@ public class MainModel {
         double[] result = new double[RESOLUTION];
 
         for (int i = 0; i < RESOLUTION; i++) {
-            result[i] = castOneRay(startAngle);
+            double distToIntersect = castOneRay(startAngle);
+            double angleFromPlayer = Math.abs(startAngle - player.getAngle());
+
+            result[i] = distToIntersect * Math.cos(Math.toRadians(angleFromPlayer));
             startAngle += increment;
         }
 
