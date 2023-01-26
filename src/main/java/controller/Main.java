@@ -6,8 +6,8 @@ import view.Renderer;
 import java.util.Arrays;
 
 public class Main {
-    private final int SCREEN_WIDTH = 1080;
-    private final double FOV = 90;
+    private final int SCREEN_WIDTH = 1920;
+    private final double FOV = 45;
 
     private MainModel model;
     private Renderer renderer;
