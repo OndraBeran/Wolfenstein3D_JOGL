@@ -2,7 +2,7 @@ package model;
 
 public class MainModel {
     private final Map map;
-    private final Player player;
+    public final Player player;
     private final int RESOLUTION;
     private final double FOV;
 
@@ -10,15 +10,16 @@ public class MainModel {
 
     public MainModel(int res, double fov) {
         map = new Map();
-        player = new Player(450, 450, 180);
+        player = new Player(450, 450, 0);
         RESOLUTION = res;
         FOV = fov;
     }
 
     public Point[][] castRays(){
         double startAngle = player.getAngle() - (FOV / 2);
+        System.out.println(startAngle);
         //must be -1 to account for starting at 0
-        double increment = FOV / (RESOLUTION - 1);
+        double increment = FOV / (RESOLUTION);
 
         //double[] result = new double[RESOLUTION];
         Point[][] result = new Point[RESOLUTION][2];
@@ -47,7 +48,7 @@ public class MainModel {
         Point[] a = xLineIntersectDist(ray);
         Point[] b = yLineIntersectDist(ray);
 
-        return Point.distance(a[0], a[1]) > Point.distance(b[0], b[1]) ? a : b;
+        return Point.distance(a[0], a[1]) < Point.distance(b[0], b[1]) ? a : b;
     }
 
     /** @noinspection IntegerDivisionInFloatingPointContext*/

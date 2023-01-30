@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 public class Main {
     private final int SCREEN_WIDTH = 1920;
-    private final double FOV = 45;
+    private final double FOV = 80;
 
     private MainModel model;
     private Renderer renderer;
@@ -17,10 +17,14 @@ public class Main {
         renderer = new Renderer();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         Main m = new Main();
-        System.out.println(Arrays.toString(m.model.castRays()));
+        System.out.println(m.model.castRays());
         m.renderer.init(m.SCREEN_WIDTH);
-        m.renderer.getListener().setRayResult(m.model.castRays());
+        while (true){
+            m.model.player.setAngle(m.model.player.getAngle() + 1);
+            m.renderer.getListener().setRayResult(m.model.castRays());
+            Thread.sleep(30);
+        }
     }
 }
