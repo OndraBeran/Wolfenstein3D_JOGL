@@ -21,16 +21,20 @@ public class MainModel {
         double increment = FOV / (RESOLUTION - 1);
 
         //double[] result = new double[RESOLUTION];
-        double[][] result = new double[RESOLUTION][2];
+        double[][] result = new double[RESOLUTION][4];
 
         for (int i = 0; i < RESOLUTION; i++) {
             double[] oneRay = castOneRay(startAngle);
             double distToIntersect = oneRay[0];
             double angleFromPlayer = Math.abs(startAngle - player.getAngle());
 
-            result[i][0] = distToIntersect * Math.cos(Math.toRadians(angleFromPlayer));
-            result[i][1] = oneRay[1];
+            oneRay[0] *= Math.cos(Math.toRadians(angleFromPlayer));
 
+//            //TODO docela nechutný, stačila by upravit první hodnota v tom poli, ne ho celý kopírovat
+//            result[i][0] = distToIntersect * Math.cos(Math.toRadians(angleFromPlayer));
+//            result[i][1] = oneRay[1];
+
+            result[i] = oneRay;
             startAngle += increment;
         }
 
@@ -40,10 +44,10 @@ public class MainModel {
     private double[] castOneRay(double angle){
         Ray ray = new Ray(player.getxCoor(), player.getyCoor(), angle);
 
-        double x = xLineIntersectDist(ray);
-        double y = yLineIntersectDist(ray);
+        double[] x = xLineIntersectDist(ray);
+        double[] y = yLineIntersectDist(ray);
 
-        return x < y ? new double[]{x, 0} : new double[]{y, 1};
+        return x[0] < y[0] ? x : y;
     }
 
     /** @noinspection IntegerDivisionInFloatingPointContext*/
@@ -103,7 +107,7 @@ public class MainModel {
         return new Point(x, y);
     }
 
-    private double xLineIntersectDist(Ray ray){
+    private double[] xLineIntersectDist(Ray ray){
         Point firstIntersectX = firstIntersectX(ray);
 
         double deltaX = xIntersectDeltaX(ray.getAngle());
@@ -126,7 +130,7 @@ public class MainModel {
 
             //check for walls
             if (map.isWall(temp)){
-                return Point.distance(nextIntersectX, new Point(ray.getxCoor(), ray.getyCoor()));
+                return new double[]{Point.distance(nextIntersectX, new Point(ray.getxCoor(), ray.getyCoor())), 0, nextIntersectX.getX(), nextIntersectX.getY()};
             } else {
                 double newX = nextIntersectX.getX() + deltaX;
                 double newY = nextIntersectX.getY() + deltaY;
@@ -134,10 +138,10 @@ public class MainModel {
             }
         }
 
-        return Double.MAX_VALUE;
+        return new double[]{Double.MAX_VALUE, 0, 0, 0};
     }
 
-    private double yLineIntersectDist(Ray ray){
+    private double[] yLineIntersectDist(Ray ray){
         Point firstIntersect = firsIntersectY(ray);
 
         double deltaX = yIntersectDeltaX(ray.getAngle());
@@ -157,7 +161,7 @@ public class MainModel {
             temp = new Point(tempX, nextIntersect.getY());
 
             if (map.isWall(temp)){
-                return Point.distance(nextIntersect, new Point(ray.getxCoor(), ray.getyCoor()));
+                return new double[]{Point.distance(nextIntersect, new Point(ray.getxCoor(), ray.getyCoor())), 1, nextIntersect.getX(), nextIntersect.getY()};
             } else {
                 double newX = nextIntersect.getX() + deltaX;
                 double newY = nextIntersect.getY() + deltaY;
@@ -166,7 +170,7 @@ public class MainModel {
 
         }
 
-        return Double.MAX_VALUE;
+        return new double[]{Double.MAX_VALUE, 0, 0, 0};
     }
 
     private double xIntersectDeltaX(double angle){
@@ -221,5 +225,9 @@ public class MainModel {
 
     public void setWindowWidth(int windowWidth) {
         this.windowWidth = windowWidth;
+    }
+
+    public Map getMap() {
+        return map;
     }
 }

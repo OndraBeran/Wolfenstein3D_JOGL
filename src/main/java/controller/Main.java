@@ -19,9 +19,9 @@ public class Main {
 
     public static void main(String[] args) throws InterruptedException {
         Main m = new Main();
-        m.renderer.init(m.SCREEN_WIDTH);
+        m.renderer.init(m.SCREEN_WIDTH, m.model.getMap());
         while (true){
-            m.model.player.setAngle(m.model.player.getAngle() + 1);
+            m.model.player.setAngle(m.model.player.getAngle() + 0.5);
             m.renderer.getListener().setRayResult(m.model.castRays());
             Thread.sleep(150);
         }
