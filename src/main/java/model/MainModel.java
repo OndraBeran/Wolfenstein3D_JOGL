@@ -10,7 +10,7 @@ public class MainModel {
 
     public MainModel(int res, double fov) {
         map = new Map();
-        player = new Player(450, 450, 0);
+        player = new Player(450, 450, 270);
         RESOLUTION = res;
         FOV = fov;
     }
@@ -19,7 +19,7 @@ public class MainModel {
         double startAngle = player.getAngle() - (FOV / 2);
         System.out.println(startAngle);
         //must be -1 to account for starting at 0
-        double increment = FOV / (RESOLUTION);
+        double increment = FOV / (RESOLUTION - 1);
 
         //double[] result = new double[RESOLUTION];
         Point[][] result = new Point[RESOLUTION][2];
@@ -36,6 +36,11 @@ public class MainModel {
         }
 
         return result;
+    }
+
+    public static void main(String[] args) {
+        MainModel m = new MainModel(1920, 60);
+        Point[] p = m.castOneRay(91);
     }
 
     private Point[] castOneRay(double angle){
@@ -141,7 +146,7 @@ public class MainModel {
         }
 
         //return Double.MAX_VALUE;
-        return new Point[]{new Point(Double.MIN_VALUE, Double.MIN_VALUE), new Point(Double.MAX_VALUE, Double.MAX_VALUE)};
+        return new Point[]{new Point(Double.MAX_VALUE / 2, Double.MAX_VALUE / 2), new Point(ray.getxCoor(), ray.getyCoor())};
     }
 
     private Point[] yLineIntersectDist(Ray ray){
@@ -175,7 +180,7 @@ public class MainModel {
         }
 
         //return Double.MAX_VALUE;
-        return new Point[]{new Point(Double.MIN_VALUE, Double.MIN_VALUE), new Point(Double.MAX_VALUE, Double.MAX_VALUE)};
+        return new Point[]{new Point(Double.MAX_VALUE / 2, Double.MAX_VALUE / 2), new Point(ray.getxCoor(), ray.getyCoor())};
     }
 
     private double xIntersectDeltaX(double angle){
@@ -183,7 +188,7 @@ public class MainModel {
             //deltaX must be positive
             return Math.pow(Math.tan(Math.toRadians(angle)), -1) * map.getTILE_SIZE();
         } else if (angle > 90 && angle <= 180){
-            return Math.pow(Math.tan(Math.toRadians(180 - angle)), 1) * map.getTILE_SIZE() * -1;
+            return Math.pow(Math.tan(Math.toRadians(180 - angle)), -1) * map.getTILE_SIZE() * -1;
         } else if (angle > 180 && angle <= 270){
             return Math.pow(Math.tan(Math.toRadians(angle - 180)), -1) * map.getTILE_SIZE() * -1;
         } else {

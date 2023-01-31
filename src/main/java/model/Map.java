@@ -19,10 +19,6 @@ public class Map {
             {true, true, true, true, true, true, true, true, true, true}
     };
 
-    public Map() {
-        System.out.println("3, 5: " + walls[5][3]);
-    }
-
     public int getNUMBER_OF_TILES() {
         return NUMBER_OF_TILES;
     }

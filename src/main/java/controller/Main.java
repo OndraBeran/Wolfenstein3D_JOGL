@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 public class Main {
     private final int SCREEN_WIDTH = 1920;
-    private final double FOV = 80;
+    private final double FOV = 60;
 
     private MainModel model;
     private Renderer renderer;
@@ -19,7 +19,6 @@ public class Main {
 
     public static void main(String[] args) throws InterruptedException {
         Main m = new Main();
-        System.out.println(m.model.castRays());
         m.renderer.init(m.SCREEN_WIDTH);
         while (true){
             m.model.player.setAngle(m.model.player.getAngle() + 1);

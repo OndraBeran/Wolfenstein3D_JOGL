@@ -8,7 +8,12 @@ public class Ray {
     public Ray(double xCoor, double yCoor, double angle) {
         this.xCoor = xCoor;
         this.yCoor = yCoor;
-        this.angle = angle;
+        if (angle < 360) {
+            this.angle = angle;
+        }
+        else{
+            this.angle = angle % 360;
+        }
     }
 
     public double getxCoor() {
