@@ -17,7 +17,6 @@ public class MainModel {
 
     public Point[][] castRays(){
         double startAngle = player.getAngle() - (FOV / 2);
-        System.out.println(startAngle);
         //must be -1 to account for starting at 0
         double increment = FOV / (RESOLUTION - 1);
 

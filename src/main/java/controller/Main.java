@@ -23,7 +23,7 @@ public class Main {
         while (true){
             m.model.player.setAngle(m.model.player.getAngle() + 1);
             m.renderer.getListener().setRayResult(m.model.castRays());
-            Thread.sleep(30);
+            Thread.sleep(150);
         }
     }
 }

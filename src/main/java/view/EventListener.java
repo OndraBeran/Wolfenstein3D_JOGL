@@ -13,9 +13,6 @@ public class EventListener implements GLEventListener {
     private final int SCREEN_HEIGHT = 1080;
     private final double WALL_HEIGHT = 100;
 
-    //temp
-    Map m = new Map();
-
     private Point[][] rayResult;
 
     public EventListener(int SCREEN_WIDTH) {
@@ -43,6 +40,10 @@ public class EventListener implements GLEventListener {
             return;
         }
 
+        /*
+
+        for debugging, draws walls
+
         gl.glColor3f(255f, 255f, 255f);
 
         for (int i = 0; i < m.getWalls().length; i++) {
@@ -58,7 +59,10 @@ public class EventListener implements GLEventListener {
                     gl.glEnd();
                 }
             }
-        }
+        }*/
+
+        /*
+        draws grid
 
         gl.glColor3f(0, 0, 12f);
 
@@ -72,7 +76,11 @@ public class EventListener implements GLEventListener {
             gl.glVertex2d(0, i * 0.1);
             gl.glVertex2d(1, i * 0.1);
             gl.glEnd();
-        }
+        }*/
+
+        /*
+
+        draws rays
 
         gl.glColor3f(255f, 0, 0);
 
@@ -85,30 +93,24 @@ public class EventListener implements GLEventListener {
             gl.glVertex2d(p[1].getX() / 1000, p[1].getY() / 1000);
 
             gl.glEnd();
-        }
+        }*/
 
-//        gl.glBegin(GL2.GL_QUADS);
-//
-//        gl.glVertex2f(0.1f, 0.1f);
-//        gl.glVertex2f(0.2f, 0.1f);
-//        gl.glVertex2f(0.2f, 0.2f);
-//        gl.glVertex2f(0.1f, 0.2f);
-//
-//        gl.glEnd();
-//        for (int i = 0; i < SCREEN_WIDTH; i++) {
-//            double scale = scaleRay(rayResult[i]);
-//            System.out.println(scale);
-//            if (scale > SCREEN_HEIGHT){
-//                scale = SCREEN_HEIGHT;
-//            }
-//
-//            gl.glBegin(GL2.GL_LINES);
-//
-//            gl.glVertex2d(i, scale);
-//            gl.glVertex2d(i, -scale);
-//
-//            gl.glEnd();
-//        }
+
+        for (int i = SCREEN_WIDTH - 1; i >= 0; i--) {
+            double distToWall = Point.distance(rayResult[i][0], rayResult[i][1]);
+            double scale = scaleRay(distToWall);
+
+            if (scale > SCREEN_HEIGHT){
+                scale = SCREEN_HEIGHT;
+            }
+
+            gl.glBegin(GL2.GL_LINES);
+
+            gl.glVertex2d(i, scale);
+            gl.glVertex2d(i, -scale);
+
+            gl.glEnd();
+        }
 
     }
 
@@ -119,11 +121,11 @@ public class EventListener implements GLEventListener {
         gl.glMatrixMode(GL2.GL_PROJECTION);
         gl.glLoadIdentity();
 
-        /*original
-        gl.glOrtho(0, SCREEN_WIDTH - 1, -1, 1, 0, 1);*/
 
-        //temp
-        gl.glOrtho(0, 16 / 9.0, 1, 0, 0, 1);
+        gl.glOrtho(0, SCREEN_WIDTH - 1, -1, 1, 0, 1);
+
+        /* for debugging
+        gl.glOrtho(0, 16 / 9.0, 1, 0, 0, 1);*/
 
         gl.glMatrixMode(GL2.GL_MODELVIEW);
     }
