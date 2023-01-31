@@ -15,21 +15,21 @@ public class MainModel {
         FOV = fov;
     }
 
-    public Point[][] castRays(){
+    public double[][] castRays(){
         double startAngle = player.getAngle() - (FOV / 2);
         //must be -1 to account for starting at 0
         double increment = FOV / (RESOLUTION - 1);
 
         //double[] result = new double[RESOLUTION];
-        Point[][] result = new Point[RESOLUTION][2];
+        double[][] result = new double[RESOLUTION][2];
 
         for (int i = 0; i < RESOLUTION; i++) {
-//            double distToIntersect = castOneRay(startAngle);
-//            double angleFromPlayer = Math.abs(startAngle - player.getAngle());
-//
-//            result[i] = distToIntersect * Math.cos(Math.toRadians(angleFromPlayer));
+            double[] oneRay = castOneRay(startAngle);
+            double distToIntersect = oneRay[0];
+            double angleFromPlayer = Math.abs(startAngle - player.getAngle());
 
-            result[i] = castOneRay(startAngle);
+            result[i][0] = distToIntersect * Math.cos(Math.toRadians(angleFromPlayer));
+            result[i][1] = oneRay[1];
 
             startAngle += increment;
         }
@@ -37,22 +37,13 @@ public class MainModel {
         return result;
     }
 
-    public static void main(String[] args) {
-        MainModel m = new MainModel(1920, 60);
-        Point[] p = m.castOneRay(91);
-    }
-
-    private Point[] castOneRay(double angle){
+    private double[] castOneRay(double angle){
         Ray ray = new Ray(player.getxCoor(), player.getyCoor(), angle);
 
-//        double x = xLineIntersectDist(ray);
-//        double y = yLineIntersectDist(ray);
-//
-//        return Double.min(x, y);
-        Point[] a = xLineIntersectDist(ray);
-        Point[] b = yLineIntersectDist(ray);
+        double x = xLineIntersectDist(ray);
+        double y = yLineIntersectDist(ray);
 
-        return Point.distance(a[0], a[1]) < Point.distance(b[0], b[1]) ? a : b;
+        return x < y ? new double[]{x, 0} : new double[]{y, 1};
     }
 
     /** @noinspection IntegerDivisionInFloatingPointContext*/
@@ -112,7 +103,7 @@ public class MainModel {
         return new Point(x, y);
     }
 
-    private Point[] xLineIntersectDist(Ray ray){
+    private double xLineIntersectDist(Ray ray){
         Point firstIntersectX = firstIntersectX(ray);
 
         double deltaX = xIntersectDeltaX(ray.getAngle());
@@ -135,8 +126,7 @@ public class MainModel {
 
             //check for walls
             if (map.isWall(temp)){
-                //return Point.distance(nextIntersectX, new Point(ray.getxCoor(), ray.getyCoor()));
-                return new Point[]{nextIntersectX, new Point(ray.getxCoor(), ray.getyCoor())};
+                return Point.distance(nextIntersectX, new Point(ray.getxCoor(), ray.getyCoor()));
             } else {
                 double newX = nextIntersectX.getX() + deltaX;
                 double newY = nextIntersectX.getY() + deltaY;
@@ -144,11 +134,10 @@ public class MainModel {
             }
         }
 
-        //return Double.MAX_VALUE;
-        return new Point[]{new Point(Double.MAX_VALUE / 2, Double.MAX_VALUE / 2), new Point(ray.getxCoor(), ray.getyCoor())};
+        return Double.MAX_VALUE;
     }
 
-    private Point[] yLineIntersectDist(Ray ray){
+    private double yLineIntersectDist(Ray ray){
         Point firstIntersect = firsIntersectY(ray);
 
         double deltaX = yIntersectDeltaX(ray.getAngle());
@@ -168,8 +157,7 @@ public class MainModel {
             temp = new Point(tempX, nextIntersect.getY());
 
             if (map.isWall(temp)){
-                //return Point.distance(nextIntersect, new Point(ray.getxCoor(), ray.getyCoor()));
-                return new Point[]{nextIntersect, new Point(ray.getxCoor(), ray.getyCoor())};
+                return Point.distance(nextIntersect, new Point(ray.getxCoor(), ray.getyCoor()));
             } else {
                 double newX = nextIntersect.getX() + deltaX;
                 double newY = nextIntersect.getY() + deltaY;
@@ -178,8 +166,7 @@ public class MainModel {
 
         }
 
-        //return Double.MAX_VALUE;
-        return new Point[]{new Point(Double.MAX_VALUE / 2, Double.MAX_VALUE / 2), new Point(ray.getxCoor(), ray.getyCoor())};
+        return Double.MAX_VALUE;
     }
 
     private double xIntersectDeltaX(double angle){

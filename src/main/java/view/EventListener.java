@@ -13,7 +13,7 @@ public class EventListener implements GLEventListener {
     private final int SCREEN_HEIGHT = 1080;
     private final double WALL_HEIGHT = 100;
 
-    private Point[][] rayResult;
+    private double[][] rayResult;
 
     public EventListener(int SCREEN_WIDTH) {
         this.SCREEN_WIDTH = SCREEN_WIDTH;
@@ -35,6 +35,26 @@ public class EventListener implements GLEventListener {
 
         gl.glClearColor(0, 0, 0, 1);
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+
+        gl.glColor3f(0.5f, 0.5f, 0.5f);
+        gl.glBegin(GL2.GL_QUADS);
+
+        gl.glVertex2d(0, 1);
+        gl.glVertex2d(SCREEN_WIDTH - 1, 1);
+        gl.glVertex2d(SCREEN_WIDTH - 1, 0);
+        gl.glVertex2d(0, 0);
+
+        gl.glEnd();
+
+        gl.glColor3f(0.3f, 0.3f, 0.3f);
+        gl.glBegin(GL2.GL_QUADS);
+
+        gl.glVertex2d(0, 0);
+        gl.glVertex2d(SCREEN_WIDTH - 1, 0);
+        gl.glVertex2d(SCREEN_WIDTH - 1, -1);
+        gl.glVertex2d(0, -1);
+
+        gl.glEnd();
 
         if (rayResult == null){
             return;
@@ -97,11 +117,17 @@ public class EventListener implements GLEventListener {
 
 
         for (int i = SCREEN_WIDTH - 1; i >= 0; i--) {
-            double distToWall = Point.distance(rayResult[i][0], rayResult[i][1]);
+            double distToWall = rayResult[i][0];
             double scale = scaleRay(distToWall);
 
             if (scale > SCREEN_HEIGHT){
                 scale = SCREEN_HEIGHT;
+            }
+
+            if (rayResult[i][1] == 0){
+                gl.glColor3f(1f, 0, 0);
+            } else {
+                gl.glColor3f(0.5f, 0, 0);
             }
 
             gl.glBegin(GL2.GL_LINES);
@@ -130,7 +156,7 @@ public class EventListener implements GLEventListener {
         gl.glMatrixMode(GL2.GL_MODELVIEW);
     }
 
-    public void setRayResult(Point[][] rayResult) {
+    public void setRayResult(double[][] rayResult) {
         this.rayResult = rayResult;
     }
 

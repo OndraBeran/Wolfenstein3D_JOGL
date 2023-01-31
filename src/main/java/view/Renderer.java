@@ -18,7 +18,7 @@ public class Renderer {
 
         window = GLWindow.create(caps);
         window.setSize(640, 360);
-        window.setFullscreen(true);
+        //window.setFullscreen(true);
 
         listener = new EventListener(res);
         window.addGLEventListener(listener);
