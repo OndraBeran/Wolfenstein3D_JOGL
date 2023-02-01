@@ -10,7 +10,8 @@ public class Renderer {
 
     private static GLWindow window = null;
 
-    private EventListener listener;
+    private EventListener wListener;
+    private KeyListener keyListener;
 
     public void init(int res, Map map){
         GLProfile.initSingleton();
@@ -19,10 +20,13 @@ public class Renderer {
 
         window = GLWindow.create(caps);
         window.setSize(640, 360);
-        window.setFullscreen(true);
+        //window.setFullscreen(true);
 
-        listener = new EventListener(res, map);
-        window.addGLEventListener(listener);
+        wListener = new EventListener(res, map);
+        window.addGLEventListener(wListener);
+
+        keyListener = new KeyListener();
+        window.addKeyListener(keyListener);
 
         FPSAnimator animator = new FPSAnimator(window, 60);
         animator.start();
@@ -30,7 +34,15 @@ public class Renderer {
         window.setVisible(true);
     }
 
-    public EventListener getListener() {
-        return listener;
+    public EventListener getwListener() {
+        return wListener;
+    }
+
+    public KeyListener getKeyListener() {
+        return keyListener;
+    }
+
+    public static GLWindow getWindow() {
+        return window;
     }
 }

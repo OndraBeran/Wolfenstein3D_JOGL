@@ -15,9 +15,23 @@ public class MainModel {
         FOV = fov;
     }
 
-    public void update(){
-        player.setxCoor(player.getxCoor() + player.getSpeedX());
-        player.setyCoor(player.getyCoor() + player.getSpeedY());
+    public void update(int[] keyEvents){
+        switch (keyEvents[0]){
+            case 1:
+                player.setAngle(player.getAngle() + player.getAngleVelocity());
+                break;
+            case -1:
+                player.setAngle(player.getAngle() - player.getAngleVelocity());
+                break;
+        }
+
+        switch (keyEvents[1]){
+            case 1:
+                player.setxCoor(player.getxCoor() + Math.cos(Math.toRadians(player.getAngle())) * player.getVelocity());
+                player.setyCoor(player.getyCoor() - Math.sin(Math.toRadians(player.getAngle())) * player.getVelocity());
+                break;
+
+        }
     }
 
     public double[][] castRays(){

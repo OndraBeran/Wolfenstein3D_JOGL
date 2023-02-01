@@ -5,8 +5,8 @@ public class Player {
     private double xCoor;
     private double yCoor;
     private double angle;
-    private double speedX;
-    private double speedY;
+    private double velocity = 1;
+    private double angleVelocity = 0.2;
 
     public double getxCoor() {
         return xCoor;
@@ -28,6 +28,14 @@ public class Player {
         return angle;
     }
 
+    public double getVelocity() {
+        return velocity;
+    }
+
+    public double getAngleVelocity() {
+        return angleVelocity;
+    }
+
     public void setAngle(double angle) {
         if(angle < 360){
             this.angle = angle;
@@ -35,22 +43,6 @@ public class Player {
         else {
             this.angle = angle % 360;
         }
-    }
-
-    public double getSpeedX() {
-        return speedX;
-    }
-
-    public void setSpeedX(double speedX) {
-        this.speedX = speedX;
-    }
-
-    public double getSpeedY() {
-        return speedY;
-    }
-
-    public void setSpeedY(double speedY) {
-        this.speedY = speedY;
     }
 
     public Player(double xCoor, double yCoor, double angle) {

@@ -1,5 +1,8 @@
 package controller;
 
+import model.MainModel;
+import view.Renderer;
+
 public class GameLoop {
     private static boolean running = false;
 
@@ -8,11 +11,13 @@ public class GameLoop {
 
     private static long lastUpdateTime = 0;
 
-    private static int targetFPS = 60;
+    private static int targetFPS = 30;
     private static int targetTime = 1000000000 / targetFPS;
 
-    public static void start(){
+
+    public static void start(MainModel model, Renderer renderer){
         Thread t = new Thread(() -> {
+
             running = true;
 
             lastUpdateTime = System.nanoTime();
@@ -24,10 +29,11 @@ public class GameLoop {
                 long currentTime = System.nanoTime();
 
                 updates = 0;
-
+                double[][] rayResult = null;
                 while (currentTime - lastUpdateTime >= targetTime) {
                     //update model
-
+                    model.update(renderer.getKeyListener().getKeyEvents());
+                    rayResult = model.castRays();
 
                     lastUpdateTime += targetTime;
                     updates++;
@@ -37,7 +43,8 @@ public class GameLoop {
                     }
                 }
                 // render
-
+                renderer.getwListener().setRayResult(rayResult);
+                renderer.getWindow().display();
 					/*
 					fps++;
 					if (System.nanoTime() >= lastFpsCheck + 1000000000) {
