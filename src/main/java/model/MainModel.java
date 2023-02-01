@@ -15,6 +15,11 @@ public class MainModel {
         FOV = fov;
     }
 
+    public void update(){
+        player.setxCoor(player.getxCoor() + player.getSpeedX());
+        player.setyCoor(player.getyCoor() + player.getSpeedY());
+    }
+
     public double[][] castRays(){
         double startAngle = player.getAngle() - (FOV / 2);
         //must be -1 to account for starting at 0
@@ -29,10 +34,6 @@ public class MainModel {
             double angleFromPlayer = Math.abs(startAngle - player.getAngle());
 
             oneRay[0] *= Math.cos(Math.toRadians(angleFromPlayer));
-
-//            //TODO docela nechutný, stačila by upravit první hodnota v tom poli, ne ho celý kopírovat
-//            result[i][0] = distToIntersect * Math.cos(Math.toRadians(angleFromPlayer));
-//            result[i][1] = oneRay[1];
 
             result[i] = oneRay;
             startAngle += increment;

@@ -1,14 +1,12 @@
 package model;
 
 public class Player {
-    private final int FOV = 60;
+
     private double xCoor;
     private double yCoor;
     private double angle;
-
-    public int getFOV() {
-        return FOV;
-    }
+    private double speedX;
+    private double speedY;
 
     public double getxCoor() {
         return xCoor;
@@ -37,6 +35,22 @@ public class Player {
         else {
             this.angle = angle % 360;
         }
+    }
+
+    public double getSpeedX() {
+        return speedX;
+    }
+
+    public void setSpeedX(double speedX) {
+        this.speedX = speedX;
+    }
+
+    public double getSpeedY() {
+        return speedY;
+    }
+
+    public void setSpeedY(double speedY) {
+        this.speedY = speedY;
     }
 
     public Player(double xCoor, double yCoor, double angle) {

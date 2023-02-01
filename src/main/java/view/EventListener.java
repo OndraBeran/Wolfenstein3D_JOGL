@@ -127,9 +127,7 @@ public class EventListener implements GLEventListener {
             }
 
 
-            if ((int)rayResult[i][2] % map.getTILE_SIZE() == 0 && (int)rayResult[i][3] % map.getTILE_SIZE() == 0){
-                gl.glColor3f(0, 0, 0);
-            }else if (rayResult[i][1] == 0){
+            if (rayResult[i][1] == 0){
                 gl.glColor3f(1f, 0, 0);
             } else {
                 gl.glColor3f(0.5f, 0, 0);
@@ -137,8 +135,8 @@ public class EventListener implements GLEventListener {
 
             gl.glBegin(GL2.GL_LINES);
 
-            gl.glVertex2d(i, scale);
-            gl.glVertex2d(i, -scale);
+            gl.glVertex2d(SCREEN_WIDTH - 1 - i, scale);
+            gl.glVertex2d(SCREEN_WIDTH - 1 - i, -scale);
 
             gl.glEnd();
         }
@@ -166,6 +164,6 @@ public class EventListener implements GLEventListener {
     }
 
     private double scaleRay(double rayLength){
-        return WALL_HEIGHT / rayLength;
+        return 150 / rayLength;
     }
 }
