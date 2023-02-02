@@ -10,7 +10,7 @@ public class MainModel {
 
     public MainModel(int res, double fov) {
         map = new Map();
-        player = new Player(450, 450, 270);
+        player = new Player(701, 299, 45);
         RESOLUTION = res;
         FOV = fov;
     }

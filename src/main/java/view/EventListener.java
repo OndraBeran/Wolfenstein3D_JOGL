@@ -5,6 +5,7 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import model.Map;
+import model.Player;
 import model.Point;
 
 public class EventListener implements GLEventListener {
@@ -13,6 +14,9 @@ public class EventListener implements GLEventListener {
     private final int SCREEN_HEIGHT = 1080;
     private final double WALL_HEIGHT = 100;
     private final Map map;
+
+    //temp
+    public Player player = null;
 
     private double[][] rayResult;
 
@@ -62,15 +66,14 @@ public class EventListener implements GLEventListener {
             return;
         }
 
-        /*
 
-        for debugging, draws walls
+        //for debugging, draws walls
 
         gl.glColor3f(255f, 255f, 255f);
 
-        for (int i = 0; i < m.getWalls().length; i++) {
-            for (int j = 0; j < m.getWalls()[i].length; j++) {
-                if (m.getWalls()[i][j]){
+        for (int i = 0; i < map.getWalls().length; i++) {
+            for (int j = 0; j < map.getWalls()[i].length; j++) {
+                if (map.getWalls()[i][j]){
                     gl.glBegin(GL2.GL_QUADS);
 
                     gl.glVertex2d(j * 0.1, i * 0.1);
@@ -81,10 +84,35 @@ public class EventListener implements GLEventListener {
                     gl.glEnd();
                 }
             }
-        }*/
+        }
 
-        /*
-        draws grid
+        //draws rays
+
+        gl.glColor3f(1, 0, 0);
+
+        for (int i = 0; i < SCREEN_WIDTH; i++) {
+            if(i % 100 ==0){
+                Point[] p = new Point[]{new Point(player.getxCoor(), player.getyCoor()), new Point(rayResult[i][2], rayResult[i][3])};
+
+                gl.glBegin(GL2.GL_LINES);
+
+                gl.glVertex2d(p[0].getX() / 1000, p[0].getY() / 1000);
+                gl.glVertex2d(p[1].getX() / 1000, p[1].getY() / 1000);
+
+                gl.glEnd();
+            }
+
+        }
+
+        //draw player direction
+        gl.glColor3f(0, 1, 0);
+        gl.glBegin(GL2.GL_LINES);
+
+        gl.glVertex2d(player.getxCoor() / 1000, player.getyCoor() / 1000);
+        gl.glVertex2d((player.getxCoor() / 1000) + Math.cos(Math.toRadians(player.getAngle())), (player.getyCoor() / 1000) - Math.sin(Math.toRadians(player.getAngle())));
+
+        gl.glEnd();
+        //draws grid
 
         gl.glColor3f(0, 0, 12f);
 
@@ -98,26 +126,10 @@ public class EventListener implements GLEventListener {
             gl.glVertex2d(0, i * 0.1);
             gl.glVertex2d(1, i * 0.1);
             gl.glEnd();
-        }*/
-
-        /*
-
-        draws rays
-
-        gl.glColor3f(255f, 0, 0);
-
-        for (int i = 0; i < SCREEN_WIDTH; i++) {
-            Point[] p = rayResult[i];
-
-            gl.glBegin(GL2.GL_LINES);
-
-            gl.glVertex2d(p[0].getX() / 1000, p[0].getY() / 1000);
-            gl.glVertex2d(p[1].getX() / 1000, p[1].getY() / 1000);
-
-            gl.glEnd();
-        }*/
+        }
 
 
+        /*temporarily disabled
         for (int i = SCREEN_WIDTH - 1; i >= 0; i--) {
             double distToWall = rayResult[i][0];
             double scale = scaleRay(distToWall);
@@ -139,7 +151,7 @@ public class EventListener implements GLEventListener {
             gl.glVertex2d(SCREEN_WIDTH - 1 - i, -scale);
 
             gl.glEnd();
-        }
+        }*/
 
     }
 
@@ -151,10 +163,10 @@ public class EventListener implements GLEventListener {
         gl.glLoadIdentity();
 
 
-        gl.glOrtho(0, SCREEN_WIDTH - 1, -1, 1, 0, 1);
+        //gl.glOrtho(0, SCREEN_WIDTH - 1, -1, 1, 0, 1);
 
-        /* for debugging
-        gl.glOrtho(0, 16 / 9.0, 1, 0, 0, 1);*/
+        //for debugging
+        gl.glOrtho(0, 16 / 9.0, 1, 0, 0, 1);
 
         gl.glMatrixMode(GL2.GL_MODELVIEW);
     }

@@ -19,7 +19,11 @@ public class Main {
 
     public static void main(String[] args) throws InterruptedException {
         Main m = new Main();
+
         m.renderer.init(m.SCREEN_WIDTH, m.model.getMap());
+
+        //temp
+        m.renderer.getwListener().player = m.model.player;
 
         GameLoop.start(m.model, m.renderer);
 //        while (true){
