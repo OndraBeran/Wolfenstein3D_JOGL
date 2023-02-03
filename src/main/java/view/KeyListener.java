@@ -31,9 +31,11 @@ public class KeyListener implements com.jogamp.newt.event.KeyListener {
             switch (e.getKeyCode()){
                 case KeyEvent.VK_LEFT:
                 case KeyEvent.VK_RIGHT:
+                    keyEvents[0] = 0;
+                    break;
                 case KeyEvent.VK_UP:
                 case KeyEvent.VK_DOWN:
-                    keyEvents[0] = 0;
+                    keyEvents[1] = 0;
                     break;
             }
         }

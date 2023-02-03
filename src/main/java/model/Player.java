@@ -5,8 +5,8 @@ public class Player {
     private double xCoor;
     private double yCoor;
     private double angle;
-    private double velocity = 1;
-    private double angleVelocity = 1;
+    private double velocity = 7;
+    private double angleVelocity = 3;
 
     public double getxCoor() {
         return xCoor;

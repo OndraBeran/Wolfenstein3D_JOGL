@@ -6,11 +6,14 @@ public class MainModel {
     private final int RESOLUTION;
     private final double FOV;
 
+    //temp
+    int counter = 5;
+
     private int windowWidth;
 
     public MainModel(int res, double fov) {
         map = new Map();
-        player = new Player(701, 299, 45);
+        player = new Player(450, 650, 0);
         RESOLUTION = res;
         FOV = fov;
     }
@@ -30,7 +33,9 @@ public class MainModel {
                 player.setxCoor(player.getxCoor() + Math.cos(Math.toRadians(player.getAngle())) * player.getVelocity());
                 player.setyCoor(player.getyCoor() - Math.sin(Math.toRadians(player.getAngle())) * player.getVelocity());
                 break;
-
+            case -1:
+                player.setxCoor(player.getxCoor() - Math.cos(Math.toRadians(player.getAngle())) * player.getVelocity());
+                player.setyCoor(player.getyCoor() + Math.sin(Math.toRadians(player.getAngle())) * player.getVelocity());
         }
     }
 
@@ -44,7 +49,6 @@ public class MainModel {
 
         for (int i = 0; i < RESOLUTION; i++) {
             double[] oneRay = castOneRay(startAngle);
-            double distToIntersect = oneRay[0];
             double angleFromPlayer = Math.abs(startAngle - player.getAngle());
 
             oneRay[0] *= Math.cos(Math.toRadians(angleFromPlayer));
@@ -62,6 +66,11 @@ public class MainModel {
         double[] x = xLineIntersectDist(ray);
         double[] y = yLineIntersectDist(ray);
 
+        if (counter == 300){
+            System.out.println("xInter " + x[2] + " / " + x[3]);
+            System.out.println("yInter " + y[2] + " / " + y[3]);
+        }
+        counter++;
         return x[0] < y[0] ? x : y;
     }
 
@@ -76,9 +85,16 @@ public class MainModel {
                     * map.getTILE_SIZE()
                 );
             //distance to next y line of grid
-            double distFromY = map.getTILE_SIZE() - (ray.getyCoor() % map.getTILE_SIZE());
+            double distFromY = map.getTILE_SIZE() - (ray.getxCoor() % map.getTILE_SIZE());
             //calculates the distance to next x line, positive for rays going up
             double distFromX = Math.tan(Math.toRadians(ray.getAngle())) * distFromY;
+
+//            if (counter < 10){
+//                System.out.println("-------");
+//                System.out.println("distY " + distFromY);
+//                System.out.println("-------");
+//                counter++;
+//            }
 
             y = ray.getyCoor() - distFromX;
         }
@@ -97,6 +113,9 @@ public class MainModel {
     /** @noinspection IntegerDivisionInFloatingPointContext*/
     private Point firstIntersectX(Ray ray){
         double x, y;
+        if(counter == 300){
+            System.out.println("angle " + ray.getAngle());
+        }
         if (ray.getAngle() < 180){
             y = (
                     ((int)ray.getyCoor() / map.getTILE_SIZE())

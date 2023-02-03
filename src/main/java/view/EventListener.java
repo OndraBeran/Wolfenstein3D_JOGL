@@ -94,6 +94,14 @@ public class EventListener implements GLEventListener {
             if(i % 100 ==0){
                 Point[] p = new Point[]{new Point(player.getxCoor(), player.getyCoor()), new Point(rayResult[i][2], rayResult[i][3])};
 
+                if (i == 0){
+                    gl.glColor3f(1, 0, 1);
+                } else if (i == 1900){
+                    gl.glColor3f(0, 0.5f, 1);
+                }else {
+                    gl.glColor3f(1, 0, 0);
+                }
+
                 gl.glBegin(GL2.GL_LINES);
 
                 gl.glVertex2d(p[0].getX() / 1000, p[0].getY() / 1000);

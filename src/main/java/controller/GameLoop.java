@@ -7,7 +7,7 @@ public class GameLoop {
     private static boolean running = false;
 
     private static int updates = 0;
-    private static final int MAX_UPDATES = 5;
+    private static final int MAX_UPDATES = 1;
 
     private static long lastUpdateTime = 0;
 
