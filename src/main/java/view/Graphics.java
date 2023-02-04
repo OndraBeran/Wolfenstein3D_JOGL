@@ -48,26 +48,57 @@ public class Graphics {
         gl.glEnd();
     }
 
-    public static void drawTexturedRay(GL2 gl, ImageResource img, double x, double y, double index){
+    public static void drawTexturedRay(GL2 gl, ImageResource img, double x, double y, double index, boolean bright){
         Texture tex = img.getTexture();
 
         if (tex != null){
             gl.glBindTexture(GL2.GL_TEXTURE_2D, tex.getTextureObject());
         }
 
+        gl.glColor3f(bright ? 1 : 0.7f, bright ? 1 : 0.7f, bright ? 1 : 0.7f);
         gl.glBegin(GL2.GL_QUADS);
 
-        gl.glTexCoord2d(index / TEXTURE_SIZE, 1);
+        gl.glTexCoord2d(index / TEXTURE_SIZE, 0);
         gl.glVertex2d(x - 0.5, y);
 
-        gl.glTexCoord2d((index + 1) / TEXTURE_SIZE, 1);
+        gl.glTexCoord2d((index + 1) / TEXTURE_SIZE, 0);
         gl.glVertex2d(x + 0.5, y);
 
-        gl.glTexCoord2d((index + 1) / TEXTURE_SIZE, 0);
+        gl.glTexCoord2d((index + 1) / TEXTURE_SIZE, 1);
         gl.glVertex2d(x + 0.5, -y);
 
-        gl.glTexCoord2d(index / TEXTURE_SIZE, 0);
+        gl.glTexCoord2d(index / TEXTURE_SIZE, 1);
         gl.glVertex2d(x - 0.5, -y);
+
+        gl.glEnd();
+
+        gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
+    }
+
+    public static void drawImage(GL2 gl, ImageResource img, double x, double width, double height){
+        Texture tex = img.getTexture();
+
+        if (tex != null){
+            gl.glBindTexture(GL2.GL_TEXTURE_2D, tex.getTextureObject());
+        }
+
+        gl.glEnable(GL2.GL_BLEND);
+        gl.glBlendFunc(GL2.GL_ONE, GL2.GL_ONE_MINUS_SRC_ALPHA);
+
+        gl.glColor3f(1, 1, 1);
+        gl.glBegin(GL2.GL_QUADS);
+
+        gl.glTexCoord2d(0, 1);
+        gl.glVertex2d(x, height /2);
+
+        gl.glTexCoord2d(1, 1);
+        gl.glVertex2d(x + width, height / 2);
+
+        gl.glTexCoord2d(1, 0);
+        gl.glVertex2d(x + width, -height / 2);
+
+        gl.glTexCoord2d(0, 0);
+        gl.glVertex2d(x, -height / 2);
 
         gl.glEnd();
 

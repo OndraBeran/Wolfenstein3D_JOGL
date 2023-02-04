@@ -25,7 +25,8 @@ public class EventListener implements GLEventListener {
     private int[] keyEvents;
     private double[][] rayResult;
 
-    ImageResource img;
+    private ImageResource[] textures;
+    private ImageResource[] sprites;
 
     public EventListener(int SCREEN_WIDTH, MainModel model, int[] keyEvents) {
         this.SCREEN_WIDTH = SCREEN_WIDTH;
@@ -47,7 +48,8 @@ public class EventListener implements GLEventListener {
         }
 
         gl.glMatrixMode(GL2.GL_MODELVIEW);
-        img = new ImageResource("pero");
+        loadTextures();
+        loadSprites();
     }
 
     @Override
@@ -79,11 +81,14 @@ public class EventListener implements GLEventListener {
                     scale = SCREEN_HEIGHT;
                 }
 
-                float color = rayResult[i][1] == 0 ? 1f : 0.5f;
+                ImageResource img = rayResult[i][1] == 0 ? textures[0] : textures[1];
+                boolean bright = rayResult[i][1] == 0;
 
-                Graphics.drawTexturedRay(gl, img, SCREEN_WIDTH - 1 - i, scale, rayResult[i][2]);
+                Graphics.drawTexturedRay(gl, img, SCREEN_WIDTH - 1 - i, scale, rayResult[i][2], bright);
 
             }
+
+            Graphics.drawImage(gl, sprites[0], 200, 256, 1024.0 / SCREEN_HEIGHT);
         } else {
 
             //for debugging, draws walls
@@ -165,5 +170,18 @@ public class EventListener implements GLEventListener {
 
     private double scaleRay(double rayLength){
         return 192 / rayLength;
+    }
+
+    private void loadTextures(){
+        textures = new ImageResource[2];
+
+        textures[0] = new ImageResource("/BSTONEA1.png");
+        textures[1] = new ImageResource("/BSTONEA2.png");
+    }
+
+    private void loadSprites(){
+        sprites = new ImageResource[1];
+
+        sprites[0] = new ImageResource("/GARDA1.png");
     }
 }

@@ -16,14 +16,7 @@ public class ImageResource {
     private BufferedImage img;
 
     public ImageResource(String path) {
-        URL url = null;
-        try {
-            url = Path.of("C:\\Users\\Ondra\\IdeaProjects\\Wolfenstein3D_JOGL\\src\\main\\resources\\BSTONEA1.png").toUri().toURL();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println(url);
+        URL url = getClass().getResource(path);
 
         try {
             img = ImageIO.read(url);
