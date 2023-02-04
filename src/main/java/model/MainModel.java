@@ -19,7 +19,7 @@ public class MainModel {
     }
 
     public void update(int[] keyEvents){
-        switch (keyEvents[0]){
+        /*switch (keyEvents[0]){
             case 1:
                 player.setAngle(player.getAngle() + player.getAngleVelocity());
                 break;
@@ -27,15 +27,15 @@ public class MainModel {
                 player.setAngle(player.getAngle() - player.getAngleVelocity());
                 break;
         }
+*/
+        player.setAngle(player.getAngle() + (keyEvents[0] * player.getAngleVelocity()));
 
-        switch (keyEvents[1]){
-            case 1:
-                player.setxCoor(player.getxCoor() + Math.cos(Math.toRadians(player.getAngle())) * player.getVelocity());
-                player.setyCoor(player.getyCoor() - Math.sin(Math.toRadians(player.getAngle())) * player.getVelocity());
-                break;
-            case -1:
-                player.setxCoor(player.getxCoor() - Math.cos(Math.toRadians(player.getAngle())) * player.getVelocity());
-                player.setyCoor(player.getyCoor() + Math.sin(Math.toRadians(player.getAngle())) * player.getVelocity());
+        double newX = player.getxCoor() + keyEvents[1] * (Math.cos(Math.toRadians(player.getAngle())) * player.getVelocity());
+        double newY = player.getyCoor() - keyEvents[1] * (Math.sin(Math.toRadians(player.getAngle())) * player.getVelocity());
+
+        if (!map.isWall(newX, newY)){
+            player.setxCoor(newX);
+            player.setyCoor(newY);
         }
     }
 
@@ -66,11 +66,6 @@ public class MainModel {
         double[] x = xLineIntersectDist(ray);
         double[] y = yLineIntersectDist(ray);
 
-        if (counter == 300){
-            System.out.println("xInter " + x[2] + " / " + x[3]);
-            System.out.println("yInter " + y[2] + " / " + y[3]);
-        }
-        counter++;
         return x[0] < y[0] ? x : y;
     }
 
@@ -89,13 +84,6 @@ public class MainModel {
             //calculates the distance to next x line, positive for rays going up
             double distFromX = Math.tan(Math.toRadians(ray.getAngle())) * distFromY;
 
-//            if (counter < 10){
-//                System.out.println("-------");
-//                System.out.println("distY " + distFromY);
-//                System.out.println("-------");
-//                counter++;
-//            }
-
             y = ray.getyCoor() - distFromX;
         }
         else {  //beginning of tile
@@ -113,9 +101,6 @@ public class MainModel {
     /** @noinspection IntegerDivisionInFloatingPointContext*/
     private Point firstIntersectX(Ray ray){
         double x, y;
-        if(counter == 300){
-            System.out.println("angle " + ray.getAngle());
-        }
         if (ray.getAngle() < 180){
             y = (
                     ((int)ray.getyCoor() / map.getTILE_SIZE())
@@ -164,7 +149,7 @@ public class MainModel {
 
             //check for walls
             if (map.isWall(temp)){
-                return new double[]{Point.distance(nextIntersectX, new Point(ray.getxCoor(), ray.getyCoor())), 0, nextIntersectX.getX(), nextIntersectX.getY()};
+                return new double[]{Point.distance(nextIntersectX, new Point(ray.getxCoor(), ray.getyCoor())), 0, map.coordInTile(nextIntersectX.getX())};
             } else {
                 double newX = nextIntersectX.getX() + deltaX;
                 double newY = nextIntersectX.getY() + deltaY;
@@ -195,7 +180,7 @@ public class MainModel {
             temp = new Point(tempX, nextIntersect.getY());
 
             if (map.isWall(temp)){
-                return new double[]{Point.distance(nextIntersect, new Point(ray.getxCoor(), ray.getyCoor())), 1, nextIntersect.getX(), nextIntersect.getY()};
+                return new double[]{Point.distance(nextIntersect, new Point(ray.getxCoor(), ray.getyCoor())), 1, map.coordInTile(nextIntersect.getY())};
             } else {
                 double newX = nextIntersect.getX() + deltaX;
                 double newY = nextIntersect.getY() + deltaY;
@@ -263,5 +248,9 @@ public class MainModel {
 
     public Map getMap() {
         return map;
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 }

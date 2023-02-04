@@ -6,7 +6,7 @@ public class Player {
     private double yCoor;
     private double angle;
     private double velocity = 7;
-    private double angleVelocity = 3;
+    private double angleVelocity = 1.5;
 
     public double getxCoor() {
         return xCoor;
@@ -44,7 +44,6 @@ public class Player {
         } else {
             this.angle = angle;
         }
-        System.out.println(this.angle);
     }
 
     public Player(double xCoor, double yCoor, double angle) {

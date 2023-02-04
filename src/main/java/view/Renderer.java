@@ -4,32 +4,31 @@ import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.util.FPSAnimator;
+import model.MainModel;
 import model.Map;
 
 public class Renderer {
 
+    private static GLProfile profile;
     private static GLWindow window = null;
 
     private EventListener wListener;
     private KeyListener keyListener;
 
-    public void init(int res, Map map){
+    public void init(int res, Map map, MainModel model){
         GLProfile.initSingleton();
-        GLProfile profile = GLProfile.get(GLProfile.GL2);
+        profile = GLProfile.get(GLProfile.GL2);
         GLCapabilities caps = new GLCapabilities(profile);
 
         window = GLWindow.create(caps);
         window.setSize((int)(640 * 2.3), (int)(360 * 2.3));
         //window.setFullscreen(true);
 
-        wListener = new EventListener(res, map);
-        window.addGLEventListener(wListener);
-
         keyListener = new KeyListener();
         window.addKeyListener(keyListener);
 
-        FPSAnimator animator = new FPSAnimator(window, 60);
-        animator.start();
+        wListener = new EventListener(res, model, keyListener.getKeyEvents());
+        window.addGLEventListener(wListener);
 
         window.setVisible(true);
     }
@@ -42,7 +41,11 @@ public class Renderer {
         return keyListener;
     }
 
-    public static GLWindow getWindow() {
+    public GLWindow getWindow() {
         return window;
+    }
+
+    public static GLProfile getProfile() {
+        return profile;
     }
 }

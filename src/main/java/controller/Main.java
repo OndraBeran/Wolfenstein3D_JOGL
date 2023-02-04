@@ -1,5 +1,6 @@
 package controller;
 
+import com.jogamp.opengl.util.FPSAnimator;
 import model.MainModel;
 import view.Renderer;
 
@@ -20,16 +21,9 @@ public class Main {
     public static void main(String[] args) throws InterruptedException {
         Main m = new Main();
 
-        m.renderer.init(m.SCREEN_WIDTH, m.model.getMap());
+        m.renderer.init(m.SCREEN_WIDTH, m.model.getMap(), m.model);
 
-        //temp
-        m.renderer.getwListener().player = m.model.player;
-
-        GameLoop.start(m.model, m.renderer);
-//        while (true){
-//            m.model.player.setAngle(m.model.player.getAngle() + 0.5);
-//            m.renderer.getListener().setRayResult(m.model.castRays());
-//            Thread.sleep(150);
-//        }
+        FPSAnimator animator = new FPSAnimator(m.renderer.getWindow(), 60, true);
+        animator.start();
     }
 }

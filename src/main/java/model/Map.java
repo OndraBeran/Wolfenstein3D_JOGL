@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public class Map {
     private final int NUMBER_OF_TILES = 10;
-    private final int TILE_SIZE = 100;
+    private final int TILE_SIZE = 128;
 
     private final boolean[][] walls = {
             {true, true, true, true, true, true, true, true, true, true},
@@ -41,13 +41,18 @@ public class Map {
         int xIndex = coordToTile(point.getX());
         int yIndex = coordToTile(point.getY());
 
-        /* FIXME
-            jestli něco bude jebat, tak je potřeba prohodit ty indexy
-         */
         return walls[yIndex][xIndex];
+    }
+
+    public boolean isWall(double x, double y){
+        return walls[coordToTile(y)] [coordToTile(x)];
     }
     
     private int coordToTile(double coord){
         return (int) coord / TILE_SIZE;
+    }
+
+    public double coordInTile(double coord){
+        return coord % TILE_SIZE;
     }
 }
