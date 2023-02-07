@@ -1,10 +1,14 @@
 package model;
 
+import java.util.Arrays;
+
 public class MainModel {
     private final Map map;
     public final Player player;
     private final int RESOLUTION;
     private final double FOV;
+
+    private Soldier[] enemies = new Soldier[1];
 
     //temp
     int counter = 5;
@@ -13,22 +17,24 @@ public class MainModel {
 
     public MainModel(int res, double fov) {
         map = new Map();
-        player = new Player(450, 650, 0);
+        player = new Player(4.5 * map.getTILE_SIZE(), 7.5 * map.getTILE_SIZE(), 0, fov);
+
+        enemies[0] = new Soldier(7.5 * map.getTILE_SIZE(), 8.5 * map.getTILE_SIZE(), 7.5 * map.getTILE_SIZE(), 10.5 * map.getTILE_SIZE());
+
         RESOLUTION = res;
         FOV = fov;
     }
 
     public void update(int[] keyEvents){
-        /*switch (keyEvents[0]){
-            case 1:
-                player.setAngle(player.getAngle() + player.getAngleVelocity());
-                break;
-            case -1:
-                player.setAngle(player.getAngle() - player.getAngleVelocity());
-                break;
-        }
-*/
         player.setAngle(player.getAngle() + (keyEvents[0] * player.getAngleVelocity()));
+
+        Point dir = new Point(player.getxCoor() - enemies[0].getX(), player.getyCoor() - enemies[0].getY());
+
+        Point normDir = Point.normalizeVector(dir);
+
+        /*enemies[0].setX(enemies[0].getX() + normDir.getX());
+        enemies[0].setY(enemies[0].getY() + normDir.getY());*/
+        enemies[0].update(player.getDirVector());
 
         double newX = player.getxCoor() + keyEvents[1] * (Math.cos(Math.toRadians(player.getAngle())) * player.getVelocity());
         double newY = player.getyCoor() - keyEvents[1] * (Math.sin(Math.toRadians(player.getAngle())) * player.getVelocity());
@@ -37,6 +43,43 @@ public class MainModel {
             player.setxCoor(newX);
             player.setyCoor(newY);
         }
+    }
+
+    public double[][] renderEnemies(){
+        double[][] result = new double[enemies.length][3];
+
+        for (int i = 0; i < enemies.length; i++) {
+            result[i] = renderEnemy(enemies[i]);
+        }
+
+        return result;
+    }
+
+    private double[] renderEnemy(Soldier soldier){
+        double[] result = new double[3];
+
+        //distance
+        result[0] = player.distToEnemy(soldier);
+
+        //position on screen
+        double angleToPlayer = player.angleToEnemy(soldier);
+
+        Point enemyVector = new Point(soldier.getX() - player.getxCoor(), -(soldier.getY() - player.getyCoor()));
+
+        Point[] vecs = player.getFOVVectors();
+
+        double angle1 = Point.angle(vecs[0], enemyVector);
+        double angle2 = Point.angle(vecs[1], enemyVector);
+
+        if (angle1 + angle2 > 57 && angle1 + angle2 < 63){
+            result[1] = (FOV - angle1) / FOV;
+        } else {
+            result[1] = 2;
+        }
+
+        result[2] = soldier.getCurrentSprite();
+
+        return result;
     }
 
     public double[][] castRays(){

@@ -1,18 +1,12 @@
 package view;
 
-import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
-import com.jogamp.opengl.util.texture.Texture;
-import com.jogamp.opengl.util.texture.TextureIO;
 import model.MainModel;
-import model.Map;
-import model.Player;
 import model.Point;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.Arrays;
 
 public class EventListener implements GLEventListener {
 
@@ -20,10 +14,12 @@ public class EventListener implements GLEventListener {
     private final int SCREEN_HEIGHT = 1080;
     private final double WALL_HEIGHT = 100;
     private final boolean DEBUG = false;
+    private boolean MARK_MIDDLE = false;
     private MainModel model;
 
     private int[] keyEvents;
     private double[][] rayResult;
+    private double[][] enemyResult;
 
     private ImageResource[] textures;
     private ImageResource[] sprites;
@@ -61,6 +57,7 @@ public class EventListener implements GLEventListener {
     public void display(GLAutoDrawable glAutoDrawable) {
         model.update(keyEvents);
         rayResult = model.castRays();
+        enemyResult = model.renderEnemies();
 
         GL2 gl = glAutoDrawable.getGL().getGL2();
 
@@ -73,22 +70,33 @@ public class EventListener implements GLEventListener {
             Graphics.drawBackground(gl, 0, SCREEN_WIDTH - 1);
 
             //draw rays
-            for (int i = SCREEN_WIDTH - 1; i >= 0; i--) {
-                double distToWall = rayResult[i][0];
-                double scale = scaleRay(distToWall);
+            for (int i = 0; i < enemyResult.length + 1; i++) {
 
-                if (scale > SCREEN_HEIGHT){
-                    scale = SCREEN_HEIGHT;
+                for (int j = SCREEN_WIDTH - 1; j >= 0; j--) {
+                    double distToWall = rayResult[j][0];
+                    double lastSpriteDist = i == 0 ? Double.MAX_VALUE : enemyResult[i - 1][0];
+                    double currentSpriteDist = i == enemyResult.length ? Double.MIN_VALUE : enemyResult[i][0];
+
+                    if (distToWall > currentSpriteDist && distToWall < lastSpriteDist){
+                        double scale = scaleRay(distToWall);
+
+                        ImageResource img = rayResult[j][1] == 0 ? textures[0] : textures[1];
+                        boolean bright = rayResult[j][1] == 0;
+
+                        Graphics.drawTexturedRay(gl, img, SCREEN_WIDTH - 1 - j, scale, rayResult[j][2], bright);
+                    }
                 }
 
-                ImageResource img = rayResult[i][1] == 0 ? textures[0] : textures[1];
-                boolean bright = rayResult[i][1] == 0;
+                if (i != enemyResult.length){
+                    double scale = scaleRay(enemyResult[i][0]);
 
-                Graphics.drawTexturedRay(gl, img, SCREEN_WIDTH - 1 - i, scale, rayResult[i][2], bright);
-
+                    Graphics.drawSprite(gl, sprites[(int)enemyResult[i][2]], enemyResult[i][1] * SCREEN_WIDTH, scale * SCREEN_HEIGHT, scale);
+                }
             }
 
-            Graphics.drawImage(gl, sprites[0], 200, 256, 1024.0 / SCREEN_HEIGHT);
+            if(MARK_MIDDLE){
+                Graphics.drawGrid(gl, SCREEN_WIDTH);
+            }
         } else {
 
             //for debugging, draws walls
@@ -112,7 +120,7 @@ public class EventListener implements GLEventListener {
 
             //draws rays
 
-            gl.glColor3f(1, 0, 0);
+            /*gl.glColor3f(1, 0, 0);
 
             for (int i = 0; i < SCREEN_WIDTH; i++) {
                 if (i % 100 == 0) {
@@ -134,7 +142,7 @@ public class EventListener implements GLEventListener {
                     gl.glEnd();
                 }
 
-            }
+            }*/
 
             //draw player direction
             gl.glColor3f(0, 1, 0);
@@ -180,8 +188,15 @@ public class EventListener implements GLEventListener {
     }
 
     private void loadSprites(){
-        sprites = new ImageResource[1];
+        sprites = new ImageResource[8];
 
-        sprites[0] = new ImageResource("/GARDA1.png");
+        sprites[0] = new ImageResource("/GARDA1_scaled_8x_pngcrushed.png");
+        sprites[1] = new ImageResource("/GARDB1_scaled_8x_pngcrushed.png");
+        sprites[2] = new ImageResource("/GARDC1_scaled_8x_pngcrushed.png");
+        sprites[3] = new ImageResource("/GARDD1_scaled_8x_pngcrushed.png");
+        sprites[4] = new ImageResource("/GARDE1_scaled_8x_pngcrushed.png");
+        sprites[5] = new ImageResource("/GARDF0_scaled_8x_pngcrushed.png");
+        sprites[6] = new ImageResource("/GARDG0_scaled_8x_pngcrushed.png");
+        sprites[7] = new ImageResource("/GARDH0_scaled_8x_pngcrushed.png");
     }
 }
