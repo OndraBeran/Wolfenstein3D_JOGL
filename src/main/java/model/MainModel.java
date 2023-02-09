@@ -23,25 +23,18 @@ public class MainModel {
     }
 
     public void update(int[] keyEvents){
-        player.setAngle(player.getAngle() + (keyEvents[0] * player.getAngleVelocity()));
+        player.update(keyEvents[0], keyEvents[1]);
+        updateEnemies();
+    }
 
-        player.getGun().update();
-
-        Point dir = new Point(player.getxCoor() - enemies[0].getX(), player.getyCoor() - enemies[0].getY());
-
-        Point normDir = Point.normalizeVector(dir);
-
-        /*enemies[0].setX(enemies[0].getX() + normDir.getX());
-        enemies[0].setY(enemies[0].getY() + normDir.getY());*/
-        enemies[0].update(player.getStandardDirVector(), player.getxCoor(), player.getyCoor());
-
-        double newX = player.getxCoor() + keyEvents[1] * (Math.cos(Math.toRadians(player.getAngle())) * player.getVelocity());
-        double newY = player.getyCoor() - keyEvents[1] * (Math.sin(Math.toRadians(player.getAngle())) * player.getVelocity());
-
-        if (!Map.isWall(newX, newY)){
-            player.setxCoor(newX);
-            player.setyCoor(newY);
+    private void updateEnemies(){
+        for (int i = 0; i < enemies.length; i++) {
+            enemies[i].update(player.getStandardDirVector(), player.getxCoor(), player.getyCoor());
         }
+    }
+
+    public void prepareRenderData(){
+
     }
 
     public double[][] renderEnemies(){
@@ -293,7 +286,6 @@ public class MainModel {
     public boolean[][] getMapWalls(){
         return Map.getWalls();
     }
-
 
     public Player getPlayer() {
         return player;

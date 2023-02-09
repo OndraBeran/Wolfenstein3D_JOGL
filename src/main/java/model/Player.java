@@ -40,6 +40,20 @@ public class Player {
         return angleVelocity;
     }
 
+    public void update(int cameraChange, int posChange){
+        setAngle(angle + (cameraChange * angleVelocity));
+
+        double newX = xCoor + posChange * (Math.cos(Math.toRadians(angle)) * velocity);
+        double newY = yCoor - posChange * (Math.sin(Math.toRadians(angle)) * velocity);
+
+        if (!Map.isWall(newX, newY)){
+            xCoor = newX;
+            yCoor = newY;
+        }
+
+        gun.update();
+    }
+
     public void setAngle(double angle) {
         if (angle < 0){
             this.angle = 360 + angle;
