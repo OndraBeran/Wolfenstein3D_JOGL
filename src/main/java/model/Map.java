@@ -3,21 +3,10 @@ package model;
 import java.util.Arrays;
 
 public class Map {
-    private final int NUMBER_OF_TILES = 10;
+    private final int NUMBER_OF_TILES = 64;
     private final int TILE_SIZE = 128;
 
-    private final boolean[][] walls = {
-            {true, true, true, true, true, true, true, true, true, true},
-            {true, false, false, false, true, false, false, false, false, true},
-            {true, false, false, false, false, false, false, false, false, true},
-            {true, false, false, false, false, false, false, false, false, true},
-            {true, false, false, false, false, false, false, false, true, true},
-            {true, true, false, false, false, false, false, false, true, true},
-            {true, true, false, false, false, false, false, false, true, true},
-            {true, false, false, false, false, false, false, false, false, true},
-            {true, false, false, false, true, false, false, false, true, true},
-            {true, true, true, true, true, true, true, true, true, true}
-    };
+    private final boolean[][] walls;
 
     public int getNUMBER_OF_TILES() {
         return NUMBER_OF_TILES;
@@ -54,5 +43,9 @@ public class Map {
 
     public double coordInTile(double coord){
         return coord % TILE_SIZE;
+    }
+
+    public Map() {
+        walls = MapLoader.load("/maps/map.png");
     }
 }

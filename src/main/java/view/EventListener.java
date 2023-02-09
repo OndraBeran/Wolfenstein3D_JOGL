@@ -4,9 +4,6 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import model.MainModel;
-import model.Point;
-
-import java.util.Arrays;
 
 public class EventListener implements GLEventListener {
 
@@ -22,7 +19,8 @@ public class EventListener implements GLEventListener {
     private double[][] enemyResult;
 
     private ImageResource[] textures;
-    private ImageResource[] sprites;
+    private ImageResource[][] enemySprites;
+    private ImageResource[] gunSprites;
 
     public EventListener(int SCREEN_WIDTH, MainModel model, int[] keyEvents) {
         this.SCREEN_WIDTH = SCREEN_WIDTH;
@@ -90,9 +88,12 @@ public class EventListener implements GLEventListener {
                 if (i != enemyResult.length){
                     double scale = scaleRay(enemyResult[i][0]);
 
-                    Graphics.drawSprite(gl, sprites[(int)enemyResult[i][2]], enemyResult[i][1] * SCREEN_WIDTH, scale * SCREEN_HEIGHT, scale);
+                    Graphics.drawSprite(gl, enemySprites[(int)enemyResult[i][3]][(int)enemyResult[i][2]], enemyResult[i][1] * SCREEN_WIDTH, scale * SCREEN_HEIGHT, scale);
                 }
             }
+
+            //draw gun
+            Graphics.drawGun(gl, gunSprites[model.getPlayer().getGun().getCurrentSprite()], SCREEN_WIDTH / 2, SCREEN_WIDTH / 4.0);
 
             if(MARK_MIDDLE){
                 Graphics.drawGrid(gl, SCREEN_WIDTH);
@@ -183,20 +184,27 @@ public class EventListener implements GLEventListener {
     private void loadTextures(){
         textures = new ImageResource[2];
 
-        textures[0] = new ImageResource("/BSTONEA1.png");
-        textures[1] = new ImageResource("/BSTONEA2.png");
+        textures[0] = new ImageResource("/textures/BSTONEA1.png");
+        textures[1] = new ImageResource("/textures/BSTONEA2.png");
     }
 
     private void loadSprites(){
-        sprites = new ImageResource[8];
+        enemySprites = new ImageResource[8][];
 
-        sprites[0] = new ImageResource("/GARDA1_scaled_8x_pngcrushed.png");
-        sprites[1] = new ImageResource("/GARDB1_scaled_8x_pngcrushed.png");
-        sprites[2] = new ImageResource("/GARDC1_scaled_8x_pngcrushed.png");
-        sprites[3] = new ImageResource("/GARDD1_scaled_8x_pngcrushed.png");
-        sprites[4] = new ImageResource("/GARDE1_scaled_8x_pngcrushed.png");
-        sprites[5] = new ImageResource("/GARDF0_scaled_8x_pngcrushed.png");
-        sprites[6] = new ImageResource("/GARDG0_scaled_8x_pngcrushed.png");
-        sprites[7] = new ImageResource("/GARDH0_scaled_8x_pngcrushed.png");
+        for (int i = 0; i < enemySprites.length; i++) {
+            enemySprites[i] = new ImageResource[5];
+
+            enemySprites[i][0] = new ImageResource("/gard_low_res/GARDA" + (i + 1) + ".png");
+            enemySprites[i][1] = new ImageResource("/gard_low_res/GARDB" + (i + 1) + ".png");
+            enemySprites[i][2] = new ImageResource("/gard_low_res/GARDC" + (i + 1) + ".png");
+            enemySprites[i][3] = new ImageResource("/gard_low_res/GARDD" + (i + 1) + ".png");
+            enemySprites[i][4] = new ImageResource("/gard_low_res/GARDE" + (i + 1) + ".png");
+        }
+
+        gunSprites = new ImageResource[3];
+
+        gunSprites[0] = new ImageResource("/gun/V_LUGR_A.png");
+        gunSprites[1] = new ImageResource("/gun/V_LUGR_B.png");
+        gunSprites[2] = new ImageResource("/gun/V_LUGR_C.png");
     }
 }

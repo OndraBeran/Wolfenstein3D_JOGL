@@ -37,12 +37,12 @@ public class Point {
         double basicAngle = Math.toDegrees(Math.atan(vector.getY() / vector.getX()));
 
         //1. quadrant
-        if (vector.getX() > 0 && vector.getY() > 0){
+        if (vector.getX() >= 0 && vector.getY() >= 0){
             return basicAngle;
         }
 
         //2. quadrant
-        if (vector.getX() < 0 && vector.getY() > 0){
+        if (vector.getX() <= 0 && vector.getY() >= 0){
             return basicAngle + 180;
         }
 
@@ -76,6 +76,14 @@ public class Point {
 
     public double vectorMagnitude(){
         return Math.sqrt(x * x + y * y);
+    }
+
+    public static Point normalVectFromAngle(double angle){
+        angle %= 360;
+
+        angle = Math.toRadians(angle);
+
+        return new Point(Math.cos(angle), Math.sin(angle));
     }
 
     @Override

@@ -21,8 +21,8 @@ public class Renderer {
         GLCapabilities caps = new GLCapabilities(profile);
 
         window = GLWindow.create(caps);
-        window.setSize((int)(640 * 2.3), (int)(360 * 2.3));
-        //window.setFullscreen(true);
+        window.setSize((int)(640 * 1), (int)(360 * 1));
+        window.setFullscreen(true);
 
         keyListener = new KeyListener();
         window.addKeyListener(keyListener);

@@ -10,6 +10,8 @@ public class Player {
     private final double velocity = 7;
     private double angleVelocity = 1.5;
 
+    private Gun gun;
+
     public double getxCoor() {
         return xCoor;
     }
@@ -48,8 +50,16 @@ public class Player {
         }
     }
 
+    public Gun getGun() {
+        return gun;
+    }
+
     public Point getDirVector(){
         return new Point(Math.cos(Math.toRadians(angle)), Math.sin(Math.toRadians(angle)));
+    }
+
+    public Point getStandardDirVector(){
+        return new Point(Math.cos(Math.toRadians(360 - angle)), Math.sin(Math.toRadians(360 - angle)));
     }
 
     public Point[] getFOVVectors(){
@@ -66,6 +76,8 @@ public class Player {
         this.yCoor = yCoor;
         this.angle = angle;
         FOV = fov;
+
+        gun = new Gun();
     }
 
     public double distToEnemy(Soldier soldier){

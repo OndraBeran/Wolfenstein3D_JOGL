@@ -1,7 +1,5 @@
 package model;
 
-import java.util.Arrays;
-
 public class MainModel {
     private final Map map;
     public final Player player;
@@ -17,9 +15,9 @@ public class MainModel {
 
     public MainModel(int res, double fov) {
         map = new Map();
-        player = new Player(4.5 * map.getTILE_SIZE(), 7.5 * map.getTILE_SIZE(), 0, fov);
+        player = new Player(53.5 * map.getTILE_SIZE(), 62.5 * map.getTILE_SIZE(), 90, fov);
 
-        enemies[0] = new Soldier(7.5 * map.getTILE_SIZE(), 8.5 * map.getTILE_SIZE(), 7.5 * map.getTILE_SIZE(), 10.5 * map.getTILE_SIZE());
+        enemies[0] = new Soldier(44.5 * map.getTILE_SIZE(), 55.5 * map.getTILE_SIZE(), 7.5 * map.getTILE_SIZE(), 2.5 * map.getTILE_SIZE());
 
         RESOLUTION = res;
         FOV = fov;
@@ -28,13 +26,15 @@ public class MainModel {
     public void update(int[] keyEvents){
         player.setAngle(player.getAngle() + (keyEvents[0] * player.getAngleVelocity()));
 
+        player.getGun().update();
+
         Point dir = new Point(player.getxCoor() - enemies[0].getX(), player.getyCoor() - enemies[0].getY());
 
         Point normDir = Point.normalizeVector(dir);
 
         /*enemies[0].setX(enemies[0].getX() + normDir.getX());
         enemies[0].setY(enemies[0].getY() + normDir.getY());*/
-        enemies[0].update(player.getDirVector());
+        enemies[0].update(player.getStandardDirVector(), player.getxCoor(), player.getyCoor());
 
         double newX = player.getxCoor() + keyEvents[1] * (Math.cos(Math.toRadians(player.getAngle())) * player.getVelocity());
         double newY = player.getyCoor() - keyEvents[1] * (Math.sin(Math.toRadians(player.getAngle())) * player.getVelocity());
@@ -56,7 +56,7 @@ public class MainModel {
     }
 
     private double[] renderEnemy(Soldier soldier){
-        double[] result = new double[3];
+        double[] result = new double[4];
 
         //distance
         result[0] = player.distToEnemy(soldier);
@@ -77,7 +77,9 @@ public class MainModel {
             result[1] = 2;
         }
 
-        result[2] = soldier.getCurrentSprite();
+        result[2] = soldier.getCurrentSpriteStage();
+
+        result[3] = soldier.getOrientatedSpriteIndex();
 
         return result;
     }
