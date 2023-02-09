@@ -5,7 +5,6 @@ import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.util.FPSAnimator;
 import model.MainModel;
-import model.Map;
 
 public class Renderer {
 
@@ -15,7 +14,7 @@ public class Renderer {
     private EventListener wListener;
     private KeyListener keyListener;
 
-    public void init(int res, Map map, MainModel model){
+    public void init(int res, MainModel model){
         GLProfile.initSingleton();
         profile = GLProfile.get(GLProfile.GL2);
         GLCapabilities caps = new GLCapabilities(profile);

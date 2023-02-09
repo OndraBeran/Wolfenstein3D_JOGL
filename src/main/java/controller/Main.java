@@ -14,14 +14,14 @@ public class Main {
     private Renderer renderer;
 
     public Main() {
-        model = new MainModel(SCREEN_WIDTH, FOV);
+        model = new MainModel(SCREEN_WIDTH, FOV, "/maps/map.png");
         renderer = new Renderer();
     }
 
     public static void main(String[] args) throws InterruptedException {
         Main m = new Main();
 
-        m.renderer.init(m.SCREEN_WIDTH, m.model.getMap(), m.model);
+        m.renderer.init(m.SCREEN_WIDTH, m.model);
 
         FPSAnimator animator = new FPSAnimator(m.renderer.getWindow(), 60, true);
         animator.start();

@@ -104,9 +104,9 @@ public class EventListener implements GLEventListener {
 
             gl.glColor3f(255f, 255f, 255f);
 
-            for (int i = 0; i < model.getMap().getWalls().length; i++) {
-                for (int j = 0; j < model.getMap().getWalls()[i].length; j++) {
-                    if (model.getMap().getWalls()[i][j]) {
+            for (int i = 0; i < model.getMapWalls().length; i++) {
+                for (int j = 0; j < model.getMapWalls()[i].length; j++) {
+                    if (model.getMapWalls()[i][j]) {
                         gl.glBegin(GL2.GL_QUADS);
 
                         gl.glVertex2d(j * 0.1, i * 0.1);

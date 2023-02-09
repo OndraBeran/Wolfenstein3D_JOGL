@@ -1,7 +1,6 @@
 package model;
 
 public class MainModel {
-    private final Map map;
     public final Player player;
     private final int RESOLUTION;
     private final double FOV;
@@ -13,11 +12,11 @@ public class MainModel {
 
     private int windowWidth;
 
-    public MainModel(int res, double fov) {
-        map = new Map();
-        player = new Player(53.5 * map.getTILE_SIZE(), 62.5 * map.getTILE_SIZE(), 90, fov);
+    public MainModel(int res, double fov, String path) {
+        Map.loadMap(path);
+        player = new Player(53.5 * Map.getTILE_SIZE(), 62.5 * Map.getTILE_SIZE(), 90, fov);
 
-        enemies[0] = new Soldier(44.5 * map.getTILE_SIZE(), 55.5 * map.getTILE_SIZE(), 7.5 * map.getTILE_SIZE(), 2.5 * map.getTILE_SIZE());
+        enemies[0] = new Soldier(44.5 * Map.getTILE_SIZE(), 55.5 * Map.getTILE_SIZE(), 7.5 * Map.getTILE_SIZE(), 2.5 * Map.getTILE_SIZE());
 
         RESOLUTION = res;
         FOV = fov;
@@ -39,7 +38,7 @@ public class MainModel {
         double newX = player.getxCoor() + keyEvents[1] * (Math.cos(Math.toRadians(player.getAngle())) * player.getVelocity());
         double newY = player.getyCoor() - keyEvents[1] * (Math.sin(Math.toRadians(player.getAngle())) * player.getVelocity());
 
-        if (!map.isWall(newX, newY)){
+        if (!Map.isWall(newX, newY)){
             player.setxCoor(newX);
             player.setyCoor(newY);
         }
@@ -120,19 +119,19 @@ public class MainModel {
         if (ray.getAngle() < 90 || ray.getAngle() >= 270){
             x = (
                     //get next tile
-                    (((int)ray.getxCoor() / map.getTILE_SIZE()) + 1)
+                    (((int)ray.getxCoor() / Map.getTILE_SIZE()) + 1)
                     //get coordinate from tile
-                    * map.getTILE_SIZE()
+                    * Map.getTILE_SIZE()
                 );
             //distance to next y line of grid
-            double distFromY = map.getTILE_SIZE() - (ray.getxCoor() % map.getTILE_SIZE());
+            double distFromY = Map.getTILE_SIZE() - (ray.getxCoor() % Map.getTILE_SIZE());
             //calculates the distance to next x line, positive for rays going up
             double distFromX = Math.tan(Math.toRadians(ray.getAngle())) * distFromY;
 
             y = ray.getyCoor() - distFromX;
         }
         else {  //beginning of tile
-            x = ((int)ray.getxCoor() / map.getTILE_SIZE()) * map.getTILE_SIZE();
+            x = ((int)ray.getxCoor() / Map.getTILE_SIZE()) * Map.getTILE_SIZE();
 
             double distFromY = ray.getxCoor() - x;
             double distFromX = Math.tan(Math.toRadians(ray.getAngle())) * distFromY;
@@ -148,8 +147,8 @@ public class MainModel {
         double x, y;
         if (ray.getAngle() < 180){
             y = (
-                    ((int)ray.getyCoor() / map.getTILE_SIZE())
-                    * map.getTILE_SIZE()
+                    ((int)ray.getyCoor() / Map.getTILE_SIZE())
+                    * Map.getTILE_SIZE()
                     );
 
             double distFromX = ray.getyCoor() - y;
@@ -159,8 +158,8 @@ public class MainModel {
         }
         else {
             y = (
-                    (((int)ray.getyCoor() / map.getTILE_SIZE()) + 1)
-                    * map.getTILE_SIZE()
+                    (((int)ray.getyCoor() / Map.getTILE_SIZE()) + 1)
+                    * Map.getTILE_SIZE()
                     );
 
             double distFromX = y - ray.getyCoor();
@@ -179,7 +178,7 @@ public class MainModel {
 
         Point nextIntersectX = new Point(firstIntersectX.getX(), firstIntersectX.getY());
 
-        while (map.inBounds(nextIntersectX)){
+        while (Map.inBounds(nextIntersectX)){
             //step into cell
             Point temp;
             double tempY;
@@ -193,8 +192,8 @@ public class MainModel {
             temp = new Point(nextIntersectX.getX(), tempY);
 
             //check for walls
-            if (map.isWall(temp)){
-                return new double[]{Point.distance(nextIntersectX, new Point(ray.getxCoor(), ray.getyCoor())), 0, map.coordInTile(nextIntersectX.getX())};
+            if (Map.isWall(temp)){
+                return new double[]{Point.distance(nextIntersectX, new Point(ray.getxCoor(), ray.getyCoor())), 0, Map.coordInTile(nextIntersectX.getX())};
             } else {
                 double newX = nextIntersectX.getX() + deltaX;
                 double newY = nextIntersectX.getY() + deltaY;
@@ -213,7 +212,7 @@ public class MainModel {
 
         Point nextIntersect = new Point(firstIntersect.getX(), firstIntersect.getY());
 
-        while (map.inBounds(nextIntersect)){
+        while (Map.inBounds(nextIntersect)){
             Point temp;
             double tempX;
             if (ray.getAngle() > 90 && ray.getAngle() <= 270){
@@ -224,8 +223,8 @@ public class MainModel {
 
             temp = new Point(tempX, nextIntersect.getY());
 
-            if (map.isWall(temp)){
-                return new double[]{Point.distance(nextIntersect, new Point(ray.getxCoor(), ray.getyCoor())), 1, map.coordInTile(nextIntersect.getY())};
+            if (Map.isWall(temp)){
+                return new double[]{Point.distance(nextIntersect, new Point(ray.getxCoor(), ray.getyCoor())), 1, Map.coordInTile(nextIntersect.getY())};
             } else {
                 double newX = nextIntersect.getX() + deltaX;
                 double newY = nextIntersect.getY() + deltaY;
@@ -240,50 +239,50 @@ public class MainModel {
     private double xIntersectDeltaX(double angle){
         if(angle <= 90) {
             //deltaX must be positive
-            return Math.pow(Math.tan(Math.toRadians(angle)), -1) * map.getTILE_SIZE();
+            return Math.pow(Math.tan(Math.toRadians(angle)), -1) * Map.getTILE_SIZE();
         } else if (angle > 90 && angle <= 180){
-            return Math.pow(Math.tan(Math.toRadians(180 - angle)), -1) * map.getTILE_SIZE() * -1;
+            return Math.pow(Math.tan(Math.toRadians(180 - angle)), -1) * Map.getTILE_SIZE() * -1;
         } else if (angle > 180 && angle <= 270){
-            return Math.pow(Math.tan(Math.toRadians(angle - 180)), -1) * map.getTILE_SIZE() * -1;
+            return Math.pow(Math.tan(Math.toRadians(angle - 180)), -1) * Map.getTILE_SIZE() * -1;
         } else {
-            return Math.pow(Math.tan(Math.toRadians(360 - angle)), -1) * map.getTILE_SIZE();
+            return Math.pow(Math.tan(Math.toRadians(360 - angle)), -1) * Map.getTILE_SIZE();
         }
     }
 
     private double xIntersectDeltaY(double angle){
         if(angle <= 90) {
             //deltaX must be positive
-            return -1 * map.getTILE_SIZE();
+            return -1 * Map.getTILE_SIZE();
         } else if (angle > 90 && angle <= 180){
-            return -1 * map.getTILE_SIZE();
+            return -1 * Map.getTILE_SIZE();
         } else if (angle > 180 && angle <= 270){
-            return map.getTILE_SIZE();
+            return Map.getTILE_SIZE();
         } else {
-            return map.getTILE_SIZE();
+            return Map.getTILE_SIZE();
         }
     }
 
    private double yIntersectDeltaX(double angle){
        if(angle <= 90) {
-           return map.getTILE_SIZE();
+           return Map.getTILE_SIZE();
        } else if (angle > 90 && angle <= 180){
-           return -1 * map.getTILE_SIZE();
+           return -1 * Map.getTILE_SIZE();
        } else if (angle > 180 && angle <= 270){
-           return -1 * map.getTILE_SIZE();
+           return -1 * Map.getTILE_SIZE();
        } else {
-           return map.getTILE_SIZE();
+           return Map.getTILE_SIZE();
        }
    }
 
    private double yIntersectDeltaY(double angle){
         if (angle <= 90){
-            return Math.tan(Math.toRadians(angle)) * map.getTILE_SIZE() * -1;
+            return Math.tan(Math.toRadians(angle)) * Map.getTILE_SIZE() * -1;
         } else if (angle > 90 && angle <= 180){
-            return Math.tan(Math.toRadians(180 - angle)) * map.getTILE_SIZE() * -1;
+            return Math.tan(Math.toRadians(180 - angle)) * Map.getTILE_SIZE() * -1;
         } else if (angle > 180 && angle <= 270){
-            return Math.tan(Math.toRadians(angle - 180)) * map.getTILE_SIZE();
+            return Math.tan(Math.toRadians(angle - 180)) * Map.getTILE_SIZE();
         } else {
-            return Math.tan(Math.toRadians(360 - angle)) * map.getTILE_SIZE();
+            return Math.tan(Math.toRadians(360 - angle)) * Map.getTILE_SIZE();
         }
    }
 
@@ -291,9 +290,10 @@ public class MainModel {
         this.windowWidth = windowWidth;
     }
 
-    public Map getMap() {
-        return map;
+    public boolean[][] getMapWalls(){
+        return Map.getWalls();
     }
+
 
     public Player getPlayer() {
         return player;
