@@ -5,7 +5,7 @@ import com.jogamp.newt.event.KeyEvent;
 import java.util.Arrays;
 
 public class KeyListener implements com.jogamp.newt.event.KeyListener {
-    private int[] keyEvents = new int[]{0, 0};
+    private static int[] keyEvents = new int[]{0, 0};
 
     @Override
     public void keyPressed(KeyEvent e) {
@@ -41,7 +41,7 @@ public class KeyListener implements com.jogamp.newt.event.KeyListener {
         }
     }
 
-    public int[] getKeyEvents() {
+    public static int[] getKeyEvents() {
         return keyEvents;
     }
 }

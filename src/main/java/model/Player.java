@@ -7,8 +7,10 @@ public class Player {
     private double xCoor;
     private double yCoor;
     private double angle;
-    private final double velocity = 7;
-    private double angleVelocity = 1.5;
+    private final double velocity = 16;
+    private double angleVelocity = 2;
+
+    private long lastUpdate = 0;
 
     private Gun gun;
 
@@ -41,10 +43,14 @@ public class Player {
     }
 
     public void update(int cameraChange, int posChange){
-        setAngle(angle + (cameraChange * angleVelocity));
+        long timeSinceUpdate = System.currentTimeMillis() - lastUpdate;
 
-        double newX = xCoor + posChange * (Math.cos(Math.toRadians(angle)) * velocity);
-        double newY = yCoor - posChange * (Math.sin(Math.toRadians(angle)) * velocity);
+        double increment = timeSinceUpdate / (1000 / 60.0);
+
+        setAngle(angle + (cameraChange * angleVelocity * increment));
+
+        double newX = xCoor + posChange * (Math.cos(Math.toRadians(angle)) * velocity * increment);
+        double newY = yCoor - posChange * (Math.sin(Math.toRadians(angle)) * velocity * increment);
 
         if (!Map.isWall(newX, newY)){
             xCoor = newX;
@@ -52,6 +58,8 @@ public class Player {
         }
 
         gun.update();
+
+        lastUpdate = System.currentTimeMillis();
     }
 
     public void setAngle(double angle) {
@@ -90,6 +98,8 @@ public class Player {
         this.yCoor = yCoor;
         this.angle = angle;
         FOV = fov;
+
+        lastUpdate = System.currentTimeMillis();
 
         gun = new Gun();
     }

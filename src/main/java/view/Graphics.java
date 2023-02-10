@@ -52,6 +52,8 @@ public class Graphics {
     public static void drawTexturedRay(GL2 gl, ImageResource img, double x, double y, double index, boolean bright){
         Texture tex = img.getTexture();
 
+        gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
+
         if (tex != null){
             gl.glBindTexture(GL2.GL_TEXTURE_2D, tex.getTextureObject());
         }

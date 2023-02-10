@@ -1,18 +1,28 @@
 package model;
 
+import model.renderdata.EnemyData;
+import model.renderdata.PlayerData;
+import model.renderdata.RayData;
+import model.renderdata.RenderData;
+
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class MainModel {
     public final Player player;
     private final int RESOLUTION;
     private final double FOV;
 
+    public AtomicBoolean writingToFirst = new AtomicBoolean(true);
+
     private Soldier[] enemies = new Soldier[1];
 
-    //temp
-    int counter = 5;
+    protected CyclicBarrier barrier;
 
-    private int windowWidth;
+    public RenderData renderData1;
+    public RenderData renderData2;
 
-    public MainModel(int res, double fov, String path) {
+    public MainModel(int res, double fov, String path, CyclicBarrier barrier) {
         Map.loadMap(path);
         player = new Player(53.5 * Map.getTILE_SIZE(), 62.5 * Map.getTILE_SIZE(), 90, fov);
 
@@ -20,6 +30,8 @@ public class MainModel {
 
         RESOLUTION = res;
         FOV = fov;
+
+        this.barrier = barrier;
     }
 
     public void update(int[] keyEvents){
@@ -34,11 +46,23 @@ public class MainModel {
     }
 
     public void prepareRenderData(){
-
+        /*
+        * cast rays
+        * get enemy data
+        * get player data
+        */
+        RayData[] rays = castRays();
+        EnemyData[] enemies = prepareEnemyData();
+        PlayerData player = preparePlayerData();
+        if (writingToFirst.get()){
+            renderData1 = new RenderData(rays, enemies, player);
+        } else {
+            renderData2 = new RenderData(rays, enemies, player);
+        }
     }
 
-    public double[][] renderEnemies(){
-        double[][] result = new double[enemies.length][3];
+    private EnemyData[] prepareEnemyData(){
+        EnemyData[] result = new EnemyData[enemies.length];
 
         for (int i = 0; i < enemies.length; i++) {
             result[i] = renderEnemy(enemies[i]);
@@ -47,14 +71,13 @@ public class MainModel {
         return result;
     }
 
-    private double[] renderEnemy(Soldier soldier){
-        double[] result = new double[4];
+    private PlayerData preparePlayerData(){
+        return new PlayerData(player.getGun().getCurrentSprite());
+    }
 
-        //distance
-        result[0] = player.distToEnemy(soldier);
+    private EnemyData renderEnemy(Soldier soldier){
 
-        //position on screen
-        double angleToPlayer = player.angleToEnemy(soldier);
+        double posInFOV;
 
         Point enemyVector = new Point(soldier.getX() - player.getxCoor(), -(soldier.getY() - player.getyCoor()));
 
@@ -64,46 +87,41 @@ public class MainModel {
         double angle2 = Point.angle(vecs[1], enemyVector);
 
         if (angle1 + angle2 > 57 && angle1 + angle2 < 63){
-            result[1] = (FOV - angle1) / FOV;
+            posInFOV = (FOV - angle1) / FOV;
         } else {
-            result[1] = 2;
+            posInFOV = 2;
         }
 
-        result[2] = soldier.getCurrentSpriteStage();
-
-        result[3] = soldier.getOrientatedSpriteIndex();
-
-        return result;
+        return new EnemyData(player.distToEnemy(soldier), posInFOV, soldier.getCurrentSpriteStage(), soldier.getOrientatedSpriteIndex());
+        //return result;
     }
 
-    public double[][] castRays(){
+    private RayData[] castRays(){
         double startAngle = player.getAngle() - (FOV / 2);
         //must be -1 to account for starting at 0
         double increment = FOV / (RESOLUTION - 1);
 
-        //double[] result = new double[RESOLUTION];
-        double[][] result = new double[RESOLUTION][4];
+        RayData[] data = new RayData[RESOLUTION];
 
         for (int i = 0; i < RESOLUTION; i++) {
-            double[] oneRay = castOneRay(startAngle);
-            double angleFromPlayer = Math.abs(startAngle - player.getAngle());
 
-            oneRay[0] *= Math.cos(Math.toRadians(angleFromPlayer));
-
-            result[i] = oneRay;
+            data[i] = castOneRay(startAngle);
             startAngle += increment;
         }
 
-        return result;
+        return data;
     }
 
-    private double[] castOneRay(double angle){
+    private RayData castOneRay(double angle){
         Ray ray = new Ray(player.getxCoor(), player.getyCoor(), angle);
 
-        double[] x = xLineIntersectDist(ray);
-        double[] y = yLineIntersectDist(ray);
+        /*double[] x = xLineIntersectDist(ray);
+        double[] y = yLineIntersectDist(ray);*/
 
-        return x[0] < y[0] ? x : y;
+        RayData x = xLineIntersectDist(ray);
+        RayData y = yLineIntersectDist(ray);
+
+        return x.length() < y.length() ? x : y;
     }
 
     /** @noinspection IntegerDivisionInFloatingPointContext*/
@@ -163,7 +181,7 @@ public class MainModel {
         return new Point(x, y);
     }
 
-    private double[] xLineIntersectDist(Ray ray){
+    private RayData xLineIntersectDist(Ray ray){
         Point firstIntersectX = firstIntersectX(ray);
 
         double deltaX = xIntersectDeltaX(ray.getAngle());
@@ -186,7 +204,16 @@ public class MainModel {
 
             //check for walls
             if (Map.isWall(temp)){
-                return new double[]{Point.distance(nextIntersectX, new Point(ray.getxCoor(), ray.getyCoor())), 0, Map.coordInTile(nextIntersectX.getX())};
+                double distToPlayer = Point.distance(nextIntersectX, new Point(ray.getxCoor(), ray.getyCoor()));
+
+                double angleToPlayer = Math.toRadians(Math.abs(ray.getAngle() - player.getAngle()));
+
+                //removes the fish eye effect
+                double distAdjusted = distToPlayer * Math.cos(angleToPlayer);
+
+                return new RayData(distAdjusted, true, Map.coordInTile(nextIntersectX.getX()));
+
+                //return new double[]{Point.distance(nextIntersectX, new Point(ray.getxCoor(), ray.getyCoor())), 0, Map.coordInTile(nextIntersectX.getX())};
             } else {
                 double newX = nextIntersectX.getX() + deltaX;
                 double newY = nextIntersectX.getY() + deltaY;
@@ -194,10 +221,11 @@ public class MainModel {
             }
         }
 
-        return new double[]{Double.MAX_VALUE, 0, 0, 0};
+        return RayData.outOfBounds;
+        //return new double[]{Double.MAX_VALUE, 0, 0, 0};
     }
 
-    private double[] yLineIntersectDist(Ray ray){
+    private RayData yLineIntersectDist(Ray ray){
         Point firstIntersect = firsIntersectY(ray);
 
         double deltaX = yIntersectDeltaX(ray.getAngle());
@@ -217,7 +245,15 @@ public class MainModel {
             temp = new Point(tempX, nextIntersect.getY());
 
             if (Map.isWall(temp)){
-                return new double[]{Point.distance(nextIntersect, new Point(ray.getxCoor(), ray.getyCoor())), 1, Map.coordInTile(nextIntersect.getY())};
+                double distToPlayer = Point.distance(nextIntersect, new Point(ray.getxCoor(), ray.getyCoor()));
+
+                double angleToPlayer = Math.toRadians(Math.abs(ray.getAngle() - player.getAngle()));
+
+                //removes the fish eye effect
+                double distAdjusted = distToPlayer * Math.cos(angleToPlayer);
+
+                return new RayData(distAdjusted, false, Map.coordInTile(nextIntersect.getY()));
+                //return new double[]{Point.distance(nextIntersect, new Point(ray.getxCoor(), ray.getyCoor())), 1, Map.coordInTile(nextIntersect.getY())};
             } else {
                 double newX = nextIntersect.getX() + deltaX;
                 double newY = nextIntersect.getY() + deltaY;
@@ -226,7 +262,8 @@ public class MainModel {
 
         }
 
-        return new double[]{Double.MAX_VALUE, 0, 0, 0};
+        return RayData.outOfBounds;
+        //return new double[]{Double.MAX_VALUE, 0, 0, 0};
     }
 
     private double xIntersectDeltaX(double angle){
@@ -278,16 +315,4 @@ public class MainModel {
             return Math.tan(Math.toRadians(360 - angle)) * Map.getTILE_SIZE();
         }
    }
-
-    public void setWindowWidth(int windowWidth) {
-        this.windowWidth = windowWidth;
-    }
-
-    public boolean[][] getMapWalls(){
-        return Map.getWalls();
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
 }

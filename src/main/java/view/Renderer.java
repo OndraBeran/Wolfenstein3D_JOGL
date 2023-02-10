@@ -6,6 +6,8 @@ import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.util.FPSAnimator;
 import model.MainModel;
 
+import java.util.concurrent.CyclicBarrier;
+
 public class Renderer {
 
     private static GLProfile profile;
@@ -14,7 +16,7 @@ public class Renderer {
     private EventListener wListener;
     private KeyListener keyListener;
 
-    public void init(int res, MainModel model){
+    public void init(int res, MainModel model, CyclicBarrier barrier){
         GLProfile.initSingleton();
         profile = GLProfile.get(GLProfile.GL2);
         GLCapabilities caps = new GLCapabilities(profile);
@@ -26,7 +28,7 @@ public class Renderer {
         keyListener = new KeyListener();
         window.addKeyListener(keyListener);
 
-        wListener = new EventListener(res, model, keyListener.getKeyEvents());
+        wListener = new EventListener(res, model, keyListener.getKeyEvents(), barrier);
         window.addGLEventListener(wListener);
 
         window.setVisible(true);

@@ -4,6 +4,12 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import model.MainModel;
+import model.ModelLoop;
+import model.renderdata.RenderData;
+
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CyclicBarrier;
 
 public class EventListener implements GLEventListener {
 
@@ -14,18 +20,16 @@ public class EventListener implements GLEventListener {
     private boolean MARK_MIDDLE = false;
     private MainModel model;
 
-    private int[] keyEvents;
-    private double[][] rayResult;
-    private double[][] enemyResult;
+    private CyclicBarrier barrier;
 
     private ImageResource[] textures;
     private ImageResource[][] enemySprites;
     private ImageResource[] gunSprites;
 
-    public EventListener(int SCREEN_WIDTH, MainModel model, int[] keyEvents) {
+    public EventListener(int SCREEN_WIDTH, MainModel model, int[] keyEvents, CyclicBarrier barrier) {
         this.SCREEN_WIDTH = SCREEN_WIDTH;
         this.model = model;
-        this.keyEvents = keyEvents;
+        this.barrier = barrier;
     }
 
     @Override
@@ -42,8 +46,11 @@ public class EventListener implements GLEventListener {
         }
 
         gl.glMatrixMode(GL2.GL_MODELVIEW);
-        loadTextures();
-        loadSprites();
+
+        loadAssets();
+
+        ModelLoop.initLoop(model);
+        ModelLoop.start();
     }
 
     @Override
@@ -53,121 +60,52 @@ public class EventListener implements GLEventListener {
 
     @Override
     public void display(GLAutoDrawable glAutoDrawable) {
-        model.update(keyEvents);
-        rayResult = model.castRays();
-        enemyResult = model.renderEnemies();
-
         GL2 gl = glAutoDrawable.getGL().getGL2();
 
         gl.glEnable(GL2.GL_TEXTURE_2D);
 
         Graphics.clear(gl);
 
-        if (!DEBUG){
-            //draw floor and ceiling
-            Graphics.drawBackground(gl, 0, SCREEN_WIDTH - 1);
+        //draw floor and ceiling
+        Graphics.drawBackground(gl, 0, SCREEN_WIDTH - 1);
 
-            //draw rays
-            for (int i = 0; i < enemyResult.length + 1; i++) {
+        RenderData data = model.writingToFirst.get() ? model.renderData2 : model.renderData1;
 
-                for (int j = SCREEN_WIDTH - 1; j >= 0; j--) {
-                    double distToWall = rayResult[j][0];
-                    double lastSpriteDist = i == 0 ? Double.MAX_VALUE : enemyResult[i - 1][0];
-                    double currentSpriteDist = i == enemyResult.length ? Double.MIN_VALUE : enemyResult[i][0];
+        //draw rays
+        for (int i = 0; i < data.enemies().length + 1; i++) {
 
-                    if (distToWall > currentSpriteDist && distToWall < lastSpriteDist){
-                        double scale = scaleRay(distToWall);
+            for (int j = SCREEN_WIDTH - 1; j >= 0; j--) {
+                double distToWall = data.rays()[j].length();
+                double lastSpriteDist = i == 0 ? Double.MAX_VALUE : data.enemies()[i - 1].distance();
+                double currentSpriteDist = i == data.enemies().length ? Double.MIN_VALUE : data.enemies()[i].distance();
 
-                        ImageResource img = rayResult[j][1] == 0 ? textures[0] : textures[1];
-                        boolean bright = rayResult[j][1] == 0;
+                if (distToWall > currentSpriteDist && distToWall < lastSpriteDist){
+                    double scale = scaleRay(distToWall);
 
-                        Graphics.drawTexturedRay(gl, img, SCREEN_WIDTH - 1 - j, scale, rayResult[j][2], bright);
-                    }
-                }
+                    ImageResource img = data.rays()[j].intersectsXAxis() ? textures[0] : textures[1];
+                    boolean bright = data.rays()[j].intersectsXAxis();
 
-                if (i != enemyResult.length){
-                    double scale = scaleRay(enemyResult[i][0]);
-
-                    Graphics.drawSprite(gl, enemySprites[(int)enemyResult[i][3]][(int)enemyResult[i][2]], enemyResult[i][1] * SCREEN_WIDTH, scale * SCREEN_HEIGHT, scale);
+                    Graphics.drawTexturedRay(gl, img, SCREEN_WIDTH - 1 - j, scale, data.rays()[j].intersectCordInTile(), bright);
                 }
             }
 
-            //draw gun
-            Graphics.drawGun(gl, gunSprites[model.getPlayer().getGun().getCurrentSprite()], SCREEN_WIDTH / 2, SCREEN_WIDTH / 4.0);
+            if (i != data.enemies().length){
+                double scale = scaleRay(data.enemies()[i].distance());
 
-            if(MARK_MIDDLE){
-                Graphics.drawGrid(gl, SCREEN_WIDTH);
+                Graphics.drawSprite(gl, enemySprites[data.enemies()[i].spriteOrientation()][data.enemies()[i].movementStage()], data.enemies()[i].posInFOV() * SCREEN_WIDTH, scale * SCREEN_HEIGHT, scale);
             }
-        } else {
+        }
 
-            //for debugging, draws walls
+        //draw gun
+        Graphics.drawGun(gl, gunSprites[data.player().gunSprite()], SCREEN_WIDTH / 2, SCREEN_WIDTH / 4.0);
 
-            gl.glColor3f(255f, 255f, 255f);
-
-            for (int i = 0; i < model.getMapWalls().length; i++) {
-                for (int j = 0; j < model.getMapWalls()[i].length; j++) {
-                    if (model.getMapWalls()[i][j]) {
-                        gl.glBegin(GL2.GL_QUADS);
-
-                        gl.glVertex2d(j * 0.1, i * 0.1);
-                        gl.glVertex2d((j + 1) * 0.1, i * 0.1);
-                        gl.glVertex2d((j + 1) * 0.1, (i + 1) * 0.1);
-                        gl.glVertex2d(j * 0.1, (i + 1) * 0.1);
-
-                        gl.glEnd();
-                    }
-                }
-            }
-
-            //draws rays
-
-            /*gl.glColor3f(1, 0, 0);
-
-            for (int i = 0; i < SCREEN_WIDTH; i++) {
-                if (i % 100 == 0) {
-                    Point[] p = new Point[]{new Point(model.getPlayer().getxCoor(), model.getPlayer().getyCoor()), new Point(rayResult[i][2], rayResult[i][3])};
-
-                    if (i == 0) {
-                        gl.glColor3f(1, 0, 1);
-                    } else if (i == 1900) {
-                        gl.glColor3f(0, 0.5f, 1);
-                    } else {
-                        gl.glColor3f(1, 0, 0);
-                    }
-
-                    gl.glBegin(GL2.GL_LINES);
-
-                    gl.glVertex2d(p[0].getX() / 1000, p[0].getY() / 1000);
-                    gl.glVertex2d(p[1].getX() / 1000, p[1].getY() / 1000);
-
-                    gl.glEnd();
-                }
-
-            }*/
-
-            //draw player direction
-            gl.glColor3f(0, 1, 0);
-            gl.glBegin(GL2.GL_LINES);
-
-            gl.glVertex2d(model.getPlayer().getxCoor() / 1000, model.getPlayer().getyCoor() / 1000);
-            gl.glVertex2d((model.getPlayer().getxCoor() / 1000) + Math.cos(Math.toRadians(model.getPlayer().getAngle())), (model.getPlayer().getyCoor() / 1000) - Math.sin(Math.toRadians(model.getPlayer().getAngle())));
-
-            gl.glEnd();
-            //draws grid
-
-            gl.glColor3f(0, 0, 12f);
-
-            for (int i = 1; i < 10; i++) {
-                gl.glBegin(GL2.GL_LINES);
-                gl.glVertex2d(i * 0.1, 0);
-                gl.glVertex2d(i * 0.1, 1);
-                gl.glEnd();
-
-                gl.glBegin(GL2.GL_LINES);
-                gl.glVertex2d(0, i * 0.1);
-                gl.glVertex2d(1, i * 0.1);
-                gl.glEnd();
-            }
+        //synchronize with model thread
+        try {
+            barrier.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (BrokenBarrierException e) {
+            e.printStackTrace();
         }
     }
 
@@ -181,30 +119,64 @@ public class EventListener implements GLEventListener {
         return 192 / rayLength;
     }
 
-    private void loadTextures(){
-        textures = new ImageResource[2];
+    private void loadAssets(){
+        CountDownLatch latch = new CountDownLatch(3);
 
-        textures[0] = new ImageResource("/textures/BSTONEA1.png");
-        textures[1] = new ImageResource("/textures/BSTONEA2.png");
+        loadTextures(latch);
+        loadEnemies(latch);
+        loadGuns(latch);
+
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void loadSprites(){
-        enemySprites = new ImageResource[8][];
+    private void loadTextures(CountDownLatch latch){
+        Thread loadTexture = new Thread(() -> {
+            textures = new ImageResource[2];
 
-        for (int i = 0; i < enemySprites.length; i++) {
-            enemySprites[i] = new ImageResource[5];
+            textures[0] = new ImageResource("/textures/BSTONEA1.png");
+            textures[1] = new ImageResource("/textures/BSTONEA2.png");
 
-            enemySprites[i][0] = new ImageResource("/gard_low_res/GARDA" + (i + 1) + ".png");
-            enemySprites[i][1] = new ImageResource("/gard_low_res/GARDB" + (i + 1) + ".png");
-            enemySprites[i][2] = new ImageResource("/gard_low_res/GARDC" + (i + 1) + ".png");
-            enemySprites[i][3] = new ImageResource("/gard_low_res/GARDD" + (i + 1) + ".png");
-            enemySprites[i][4] = new ImageResource("/gard_low_res/GARDE" + (i + 1) + ".png");
-        }
+            latch.countDown();
+        });
 
-        gunSprites = new ImageResource[3];
+        loadTexture.start();
+    }
 
-        gunSprites[0] = new ImageResource("/gun/V_LUGR_A.png");
-        gunSprites[1] = new ImageResource("/gun/V_LUGR_B.png");
-        gunSprites[2] = new ImageResource("/gun/V_LUGR_C.png");
+    private void loadEnemies(CountDownLatch latch){
+        Thread loadEnemies = new Thread(() -> {
+            enemySprites = new ImageResource[8][];
+
+            for (int i = 0; i < enemySprites.length; i++) {
+                enemySprites[i] = new ImageResource[5];
+
+                enemySprites[i][0] = new ImageResource("/gard_low_res/GARDA" + (i + 1) + ".png");
+                enemySprites[i][1] = new ImageResource("/gard_low_res/GARDB" + (i + 1) + ".png");
+                enemySprites[i][2] = new ImageResource("/gard_low_res/GARDC" + (i + 1) + ".png");
+                enemySprites[i][3] = new ImageResource("/gard_low_res/GARDD" + (i + 1) + ".png");
+                enemySprites[i][4] = new ImageResource("/gard_low_res/GARDE" + (i + 1) + ".png");
+            }
+
+            latch.countDown();
+        });
+
+        loadEnemies.start();
+    }
+
+    private void loadGuns(CountDownLatch latch){
+        Thread loadGuns = new Thread(() -> {
+            gunSprites = new ImageResource[3];
+
+            gunSprites[0] = new ImageResource("/gun/V_LUGR_A.png");
+            gunSprites[1] = new ImageResource("/gun/V_LUGR_B.png");
+            gunSprites[2] = new ImageResource("/gun/V_LUGR_C.png");
+
+            latch.countDown();
+        });
+
+        loadGuns.start();
     }
 }
