@@ -42,15 +42,15 @@ public class Player {
         return angleVelocity;
     }
 
-    public void update(int cameraChange, int posChange){
+    public void update(){
         long timeSinceUpdate = System.currentTimeMillis() - lastUpdate;
 
         double increment = timeSinceUpdate / (1000 / 60.0);
 
-        setAngle(angle + (cameraChange * angleVelocity * increment));
+        setAngle(angle + (KeyInputData.getRotation() * angleVelocity * increment));
 
-        double newX = xCoor + posChange * (Math.cos(Math.toRadians(angle)) * velocity * increment);
-        double newY = yCoor - posChange * (Math.sin(Math.toRadians(angle)) * velocity * increment);
+        double newY = yCoor - KeyInputData.getMovement() * (Math.sin(Math.toRadians(angle)) * velocity * increment);
+        double newX = xCoor + KeyInputData.getMovement() * (Math.cos(Math.toRadians(angle)) * velocity * increment);
 
         if (!Map.isWall(newX, newY)){
             xCoor = newX;

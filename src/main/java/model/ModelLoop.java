@@ -21,7 +21,7 @@ public class ModelLoop {
     public static void start(){
         Thread modelThread = new Thread(() -> {
            while(true){
-               model.update(KeyListener.getKeyEvents());
+               model.update();
 
                model.prepareRenderData();
                try {

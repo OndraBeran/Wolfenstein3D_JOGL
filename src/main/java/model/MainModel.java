@@ -34,8 +34,8 @@ public class MainModel {
         this.barrier = barrier;
     }
 
-    public void update(int[] keyEvents){
-        player.update(keyEvents[0], keyEvents[1]);
+    public void update(){
+        player.update();
         updateEnemies();
     }
 

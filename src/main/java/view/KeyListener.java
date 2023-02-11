@@ -1,6 +1,7 @@
 package view;
 
 import com.jogamp.newt.event.KeyEvent;
+import model.KeyInputData;
 
 import java.util.Arrays;
 
@@ -11,16 +12,16 @@ public class KeyListener implements com.jogamp.newt.event.KeyListener {
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()){
             case KeyEvent.VK_LEFT:
-                keyEvents[0] = 1;
+                KeyInputData.setRotation(1);
                 break;
             case KeyEvent.VK_RIGHT:
-                keyEvents[0] = -1;
+                KeyInputData.setRotation(-1);
                 break;
             case KeyEvent.VK_UP:
-                keyEvents[1] = 1;
+                KeyInputData.setMovement(1);
                 break;
             case KeyEvent.VK_DOWN:
-                keyEvents[1] = -1;
+                KeyInputData.setMovement(-1);
                 break;
         }
     }
@@ -31,11 +32,11 @@ public class KeyListener implements com.jogamp.newt.event.KeyListener {
             switch (e.getKeyCode()){
                 case KeyEvent.VK_LEFT:
                 case KeyEvent.VK_RIGHT:
-                    keyEvents[0] = 0;
+                    KeyInputData.setRotation(0);
                     break;
                 case KeyEvent.VK_UP:
                 case KeyEvent.VK_DOWN:
-                    keyEvents[1] = 0;
+                    KeyInputData.setMovement(0);
                     break;
             }
         }

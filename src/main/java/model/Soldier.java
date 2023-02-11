@@ -101,46 +101,6 @@ public class Soldier {
     }
 
 
-    /**
-     * @return returns the index of appropriate sprite array
-     */
-   /* private int spriteOrientation(Point player){
-        //Point dirVector = getNormalDirVector();
-        //double absoluteAngle = Point.angleToXAxis(new Point(dirVector.getX(), -dirVector.getY()));
-
-        double absoluteAngle = Point.angleToXAxis(getNormalDirVector());
-
-        double playerAngle = Point.angleToXAxis(player);
-
-        double difference = absoluteAngle - playerAngle;
-
-        if (difference < 0){
-            difference += 360;
-        }
-
-        //8 different  direction sprites => increment = 360 / 8
-        int increment = 45;
-        double base = 22.5;
-
-        if (difference < base || difference > 360 - base){
-            return 4;
-        } else if (difference >= base && difference < base + increment){
-            return 3;
-        } else if (difference >= base + increment && difference < base + 2 * increment){
-            return 2;
-        } else if (difference >= base + 2 * increment && difference < base + 3 * increment){
-            return 1;
-        } else if (difference >= base + 3 * increment && difference < base + 4 * increment){
-            return 0;
-        } else if (difference >= base + 4 * increment && difference < base + 5 * increment){
-            return 7;
-        } else if (difference >= base + 5 * increment && difference < base + 6 * increment){
-            return 6;
-        } else {
-            return 5;
-        }
-    }*/
-
     public double getX() {
         return x;
     }
