@@ -4,7 +4,7 @@ public class Soldier {
     private final double IDLE_SPEED = 0.5;
     private final int IDLE_ANIMATION = 150;
 
-    private final double ENGAGED_SPEED = 1;
+    private final double ENGAGED_SPEED = 24;
 
     private double x;
     private double y;
@@ -59,18 +59,23 @@ public class Soldier {
             for (int i = 0; i < 8; i++) {
                 dirVects[i] = Point.normalVectFromAngle(angle);
 
-                double dist = Point.distance(x + dirVects[i].getX(), y + dirVects[i].getY(), playerX, playerY);
+                double newX = x + dirVects[i].getX();
+                double newY = y + dirVects[i].getY();
 
-                if (dist < minDist) {
-                    indexOfSmallest = i;
-                    minDist = dist;
+                if (!Map.isWall(newX, newY)){
+                    double dist = Point.distance(x + dirVects[i].getX(), y + dirVects[i].getY(), playerX, playerY);
+
+                    if (dist < minDist) {
+                        indexOfSmallest = i;
+                        minDist = dist;
+                    }
                 }
 
                 angle += 45;
             }
 
-            x += dirVects[indexOfSmallest].getX() * ENGAGED_SPEED * 9;
-            y += dirVects[indexOfSmallest].getY() * ENGAGED_SPEED * 9;
+            x += dirVects[indexOfSmallest].getX() * ENGAGED_SPEED;
+            y += dirVects[indexOfSmallest].getY() * ENGAGED_SPEED;
 
             switch (indexOfSmallest){
                 case 0:

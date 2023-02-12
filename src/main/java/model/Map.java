@@ -2,7 +2,7 @@ package model;
 
 import java.util.Arrays;
 
-class Map {
+public class Map {
     private static final int NUMBER_OF_TILES = 64;
     private static final int TILE_SIZE = 128;
 
@@ -37,7 +37,7 @@ class Map {
         return walls[coordToTile(y)] [coordToTile(x)];
     }
     
-    private static int coordToTile(double coord){
+    public static int coordToTile(double coord){
         return (int) coord / TILE_SIZE;
     }
 

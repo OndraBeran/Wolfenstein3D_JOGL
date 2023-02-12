@@ -3,6 +3,9 @@ package view;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
+import model.Map;
+import model.Player;
+import model.Soldier;
 
 public class Graphics {
     private static final int TEXTURE_SIZE = 128;
@@ -142,16 +145,47 @@ public class Graphics {
         gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
     }
 
-    public static void drawGrid(GL2 gl, int screenWidth){
-        gl.glColor3f(0.75f, 0, 0);
-
-        gl.glBegin(GL2.GL_LINES);
+    public static void drawMinimap(GL2 gl, Player player, Soldier[] enemies){
+        gl.glColor3d(0.5, 0.5, 0.5);
+        gl.glBegin(GL2.GL_QUADS);
 
         gl.glVertex2d(0, 0);
-        gl.glVertex2d(screenWidth - 1, 0);
+        gl.glVertex2d(0, 1);
+        gl.glVertex2d(1, 1);
+        gl.glVertex2d(1, 0);
 
-        gl.glVertex2d(screenWidth / 2, 1);
-        gl.glVertex2d(screenWidth / 2, -1);
+        gl.glEnd();
+
+        gl.glColor3d(0, 0.25, 1);
+
+        boolean[][] walls = Map.getWalls();
+
+        for (int i = 0; i < walls.length; i++) {
+            for (int j = 0; j < walls[i].length; j++) {
+                if (walls[i][j]){
+                    drawMinimapTile(gl, j, i);
+                }
+            }
+        }
+
+        gl.glColor3d(1, 0, 0);
+        drawMinimapTile(gl, Map.coordToTile(player.getxCoor()), Map.coordToTile(player.getyCoor()));
+
+        gl.glColor3d(0, 1, 0);
+        for (Soldier soldier :
+                enemies) {
+            drawMinimapTile(gl, Map.coordToTile(soldier.getX()), Map.coordToTile(soldier.getY()));
+        }
+    }
+
+    private static void drawMinimapTile(GL2 gl, int x, int y){
+        double tileSize = 1.0 / Map.getNUMBER_OF_TILES();
+        gl.glBegin(GL2.GL_QUADS);
+
+        gl.glVertex2d(x * tileSize, y * tileSize);
+        gl.glVertex2d((x + 1) * tileSize, y * tileSize);
+        gl.glVertex2d((x + 1) * tileSize, (y + 1) * tileSize);
+        gl.glVertex2d(x * tileSize, (y + 1) * tileSize);
 
         gl.glEnd();
     }

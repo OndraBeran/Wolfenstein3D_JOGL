@@ -15,7 +15,7 @@ public class MainModel {
 
     public AtomicBoolean writingToFirst = new AtomicBoolean(true);
 
-    private Soldier[] enemies = new Soldier[1];
+    public Soldier[] enemies = new Soldier[1];
 
     protected CyclicBarrier barrier;
 
@@ -24,7 +24,7 @@ public class MainModel {
 
     public MainModel(int res, double fov, String path, CyclicBarrier barrier) {
         Map.loadMap(path);
-        player = new Player(53.5 * Map.getTILE_SIZE(), 62.5 * Map.getTILE_SIZE(), 90, fov);
+        player = new Player(53.5 * Map.getTILE_SIZE(), 62.5 * Map.getTILE_SIZE(), 90, fov, enemies);
 
         enemies[0] = new Soldier(44.5 * Map.getTILE_SIZE(), 55.5 * Map.getTILE_SIZE(), 7.5 * Map.getTILE_SIZE(), 2.5 * Map.getTILE_SIZE());
 

@@ -57,7 +57,7 @@ public class Player {
             yCoor = newY;
         }
 
-        gun.update();
+        gun.update(angle);
 
         lastUpdate = System.currentTimeMillis();
     }
@@ -93,7 +93,7 @@ public class Player {
         return vectors;
     }
 
-    public Player(double xCoor, double yCoor, double angle, double fov) {
+    public Player(double xCoor, double yCoor, double angle, double fov, Soldier[] enemies) {
         this.xCoor = xCoor;
         this.yCoor = yCoor;
         this.angle = angle;
@@ -101,7 +101,7 @@ public class Player {
 
         lastUpdate = System.currentTimeMillis();
 
-        gun = new Gun();
+        gun = new Gun(enemies);
     }
 
     public double distToEnemy(Soldier soldier){

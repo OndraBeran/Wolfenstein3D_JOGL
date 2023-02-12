@@ -16,6 +16,7 @@ public class Main {
     private CyclicBarrier barrier;
 
     public Main() {
+        System.setProperty("newt.window.icons", "icon_48px.png icon_48px.png");
         barrier = new CyclicBarrier(2, () -> {
             model.writingToFirst.set(!model.writingToFirst.get());
         });

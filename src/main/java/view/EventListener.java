@@ -3,6 +3,7 @@ package view;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
+import model.KeyInputData;
 import model.MainModel;
 import model.ModelLoop;
 import model.renderdata.RenderData;
@@ -16,8 +17,6 @@ public class EventListener implements GLEventListener {
     private final int SCREEN_WIDTH;
     private final int SCREEN_HEIGHT = 1080;
     private final double WALL_HEIGHT = 100;
-    private final boolean DEBUG = false;
-    private boolean MARK_MIDDLE = false;
     private MainModel model;
 
     private CyclicBarrier barrier;
@@ -36,16 +35,7 @@ public class EventListener implements GLEventListener {
     public void init(GLAutoDrawable glAutoDrawable) {
         GL2 gl = glAutoDrawable.getGL().getGL2();
 
-        gl.glMatrixMode(GL2.GL_PROJECTION);
-        gl.glLoadIdentity();
-
-        if (!DEBUG){
-            gl.glOrtho(0, SCREEN_WIDTH - 1, -1, 1, 0, 1);
-        } else {
-            gl.glOrtho(0, 16 / 9.0, 1, 0, 0, 1);
-        }
-
-        gl.glMatrixMode(GL2.GL_MODELVIEW);
+        defaultUnits(gl);
 
         loadAssets();
 
@@ -98,6 +88,13 @@ public class EventListener implements GLEventListener {
 
         //draw gun
         Graphics.drawGun(gl, gunSprites[data.player().gunSprite()], SCREEN_WIDTH / 2, SCREEN_WIDTH / 4.0);
+
+        if (KeyInputData.isDebugging()){
+            //draw minimap
+            minimapUnits(gl);
+            Graphics.drawMinimap(gl, model.player, model.enemies);
+            defaultUnits(gl);
+        }
 
         //synchronize with model thread
         try {
@@ -178,5 +175,23 @@ public class EventListener implements GLEventListener {
         });
 
         loadGuns.start();
+    }
+
+    private void defaultUnits(GL2 gl){
+        gl.glMatrixMode(GL2.GL_PROJECTION);
+        gl.glLoadIdentity();
+
+        gl.glOrtho(0, SCREEN_WIDTH - 1, -1, 1, 0, 1);
+
+        gl.glMatrixMode(GL2.GL_MODELVIEW);
+    }
+
+    private void minimapUnits(GL2 gl){
+        gl.glMatrixMode(GL2.GL_PROJECTION);
+        gl.glLoadIdentity();
+
+        gl.glOrtho(-3, 1, SCREEN_HEIGHT / (SCREEN_WIDTH / 4.0), 0, 0, 1);
+
+        gl.glMatrixMode(GL2.GL_MODELVIEW);
     }
 }

@@ -23,6 +23,12 @@ public class KeyListener implements com.jogamp.newt.event.KeyListener {
             case KeyEvent.VK_DOWN:
                 KeyInputData.setMovement(-1);
                 break;
+            case KeyEvent.VK_SPACE:
+                KeyInputData.setShooting(true);
+                break;
+            case KeyEvent.VK_F3:
+                KeyInputData.setDebugging(!KeyInputData.isDebugging());
+                break;
         }
     }
 
@@ -37,6 +43,9 @@ public class KeyListener implements com.jogamp.newt.event.KeyListener {
                 case KeyEvent.VK_UP:
                 case KeyEvent.VK_DOWN:
                     KeyInputData.setMovement(0);
+                    break;
+                case KeyEvent.VK_SPACE:
+                    KeyInputData.setShooting(false);
                     break;
             }
         }
