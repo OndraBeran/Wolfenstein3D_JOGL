@@ -16,6 +16,9 @@ public class Soldier {
     private Point[] idleTargets = new Point[2];
     private int targetIndex = 1;
 
+    private int[] targetTile;
+    private Point dirVector;
+
     private boolean idle = false;
 
     public Soldier(double x, double y, double idleX, double idleY) {
@@ -24,6 +27,10 @@ public class Soldier {
 
         idleTargets[0] = new Point(x, y);
         idleTargets[1] = new Point(idleX, idleY);
+
+        targetTile[0] = Map.coordToTile(x) + 1;
+        targetTile[1] = Map.coordToTile(y);
+        dirVector = new Point(1, 0);
     }
 
     public void update(Point playerDirVect, double playerX, double playerY){
