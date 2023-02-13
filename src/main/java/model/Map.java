@@ -45,6 +45,10 @@ public class Map {
         return coord % TILE_SIZE;
     }
 
+    public static Point centerOfTile(int x, int y){
+        return new Point(x * TILE_SIZE + (TILE_SIZE / 2), y * TILE_SIZE + (TILE_SIZE / 2));
+    }
+
     public static void loadMap(String path){
         walls = MapLoader.load(path);
     }

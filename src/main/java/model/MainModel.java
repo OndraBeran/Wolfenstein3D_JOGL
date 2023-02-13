@@ -26,7 +26,7 @@ public class MainModel {
         Map.loadMap(path);
         player = new Player(53.5 * Map.getTILE_SIZE(), 62.5 * Map.getTILE_SIZE(), 90, fov, enemies);
 
-        enemies[0] = new Soldier(44.5 * Map.getTILE_SIZE(), 55.5 * Map.getTILE_SIZE(), 7.5 * Map.getTILE_SIZE(), 2.5 * Map.getTILE_SIZE());
+        enemies[0] = new Soldier(44.5 * Map.getTILE_SIZE(), 55.5 * Map.getTILE_SIZE(), 7.5 * Map.getTILE_SIZE(), 2.5 * Map.getTILE_SIZE(), player);
 
         RESOLUTION = res;
         FOV = fov;

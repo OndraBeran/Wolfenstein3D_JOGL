@@ -29,6 +29,9 @@ public class KeyListener implements com.jogamp.newt.event.KeyListener {
             case KeyEvent.VK_F3:
                 KeyInputData.setDebugging(!KeyInputData.isDebugging());
                 break;
+            case KeyEvent.VK_F5:
+                KeyInputData.setSwastikaMode(!KeyInputData.isSwastikaMode());
+                break;
         }
     }
 

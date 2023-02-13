@@ -72,7 +72,14 @@ public class EventListener implements GLEventListener {
                 if (distToWall > currentSpriteDist && distToWall < lastSpriteDist){
                     double scale = scaleRay(distToWall);
 
-                    ImageResource img = data.rays()[j].intersectsXAxis() ? textures[0] : textures[1];
+                    ImageResource img;
+
+                    if (!KeyInputData.isSwastikaMode()){
+                        img = data.rays()[j].intersectsXAxis() ? textures[0] : textures[1];
+                    } else {
+                        img = data.rays()[j].intersectsXAxis() ? textures[2] : textures[3];
+                    }
+
                     boolean bright = data.rays()[j].intersectsXAxis();
 
                     Graphics.drawTexturedRay(gl, img, SCREEN_WIDTH - 1 - j, scale, data.rays()[j].intersectCordInTile(), bright);
@@ -132,13 +139,15 @@ public class EventListener implements GLEventListener {
 
     private void loadTextures(CountDownLatch latch){
         Thread loadTexture = new Thread(() -> {
-            textures = new ImageResource[2];
+            textures = new ImageResource[4];
 
             textures[0] = new ImageResource("/textures/BSTONEA1.png");
             textures[1] = new ImageResource("/textures/BSTONEA2.png");
+            textures[2] = new ImageResource("/textures/GSTHTLR1.png");
+            textures[3] = new ImageResource("/textures/GSTHTLR2.png");
 
             latch.countDown();
-        });
+        }, "loadTexture");
 
         loadTexture.start();
     }
@@ -150,15 +159,15 @@ public class EventListener implements GLEventListener {
             for (int i = 0; i < enemySprites.length; i++) {
                 enemySprites[i] = new ImageResource[5];
 
-                enemySprites[i][0] = new ImageResource("/gard_low_res/GARDA" + (i + 1) + ".png");
-                enemySprites[i][1] = new ImageResource("/gard_low_res/GARDB" + (i + 1) + ".png");
-                enemySprites[i][2] = new ImageResource("/gard_low_res/GARDC" + (i + 1) + ".png");
-                enemySprites[i][3] = new ImageResource("/gard_low_res/GARDD" + (i + 1) + ".png");
-                enemySprites[i][4] = new ImageResource("/gard_low_res/GARDE" + (i + 1) + ".png");
+                enemySprites[i][0] = new ImageResource("/gard/GARDA" + (i + 1) + ".png");
+                enemySprites[i][1] = new ImageResource("/gard/GARDB" + (i + 1) + ".png");
+                enemySprites[i][2] = new ImageResource("/gard/GARDC" + (i + 1) + ".png");
+                enemySprites[i][3] = new ImageResource("/gard/GARDD" + (i + 1) + ".png");
+                enemySprites[i][4] = new ImageResource("/gard/GARDE" + (i + 1) + ".png");
             }
 
             latch.countDown();
-        });
+        }, "loadEnemy");
 
         loadEnemies.start();
     }
@@ -172,7 +181,7 @@ public class EventListener implements GLEventListener {
             gunSprites[2] = new ImageResource("/gun/V_LUGR_C.png");
 
             latch.countDown();
-        });
+        }, "loadGun");
 
         loadGuns.start();
     }

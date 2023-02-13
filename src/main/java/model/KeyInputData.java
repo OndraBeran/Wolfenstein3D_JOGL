@@ -6,6 +6,8 @@ public class KeyInputData {
     private static boolean shooting = false;
     private static boolean debugging = false;
 
+    private static boolean swastikaMode = false;
+
     public static synchronized int getMovement() {
         return movement;
     }
@@ -36,6 +38,14 @@ public class KeyInputData {
 
     public static synchronized void setDebugging(boolean debugging) {
         KeyInputData.debugging = debugging;
+    }
+
+    public static synchronized boolean isSwastikaMode() {
+        return swastikaMode;
+    }
+
+    public static synchronized void setSwastikaMode(boolean swastikaMode) {
+        KeyInputData.swastikaMode = swastikaMode;
     }
 }
 

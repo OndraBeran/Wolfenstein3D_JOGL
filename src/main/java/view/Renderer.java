@@ -22,6 +22,7 @@ public class Renderer {
         GLCapabilities caps = new GLCapabilities(profile);
 
         window = GLWindow.create(caps);
+        window.setTitle("Wolfenstein 3D");
         window.setSize((int)(640 * 2), (int)(360 * 2));
         //window.setFullscreen(true);
 

@@ -13,24 +13,24 @@ public class Soldier {
     private long lastUpdate = 0;
     private int orientatedSpriteIndex = 0;
 
+    private Player player;
+
     private Point[] idleTargets = new Point[2];
     private int targetIndex = 1;
 
     private int[] targetTile;
-    private Point dirVector;
 
     private boolean idle = false;
 
-    public Soldier(double x, double y, double idleX, double idleY) {
+    public Soldier(double x, double y, double idleX, double idleY, Player player) {
         this.x = x;
         this.y = y;
+        this.player = player;
 
         idleTargets[0] = new Point(x, y);
         idleTargets[1] = new Point(idleX, idleY);
 
-        targetTile[0] = Map.coordToTile(x) + 1;
-        targetTile[1] = Map.coordToTile(y);
-        dirVector = new Point(1, 0);
+        chooseTargetTile();
     }
 
     public void update(Point playerDirVect, double playerX, double playerY){
@@ -140,6 +140,35 @@ public class Soldier {
             //TODO doplnit
             return new Point(1, 0);
         }
+    }
+
+    private void chooseTargetTile(){
+        int currentX = Map.coordToTile(x);
+        int currentY = Map.coordToTile(y);
+
+        int[][] possibleTiles = new int[8][2];
+        int counter = 0;
+
+        double minDist = Double.MAX_VALUE;
+        int indexOfSmallest = 0;
+
+        for (int i = currentX - 1; i <= currentX + 1; i++) {
+            for (int j = currentY - 1; j <= currentY + 1; j++){
+                if (i != currentX && j != currentY){
+                    possibleTiles[counter] = new int[]{i, j};
+
+                    double distToPlayer2 = Math.pow(i - Map.coordToTile(player.getxCoor()), 2) + Math.pow(j - Map.coordToTile(player.getyCoor()), 2);
+                    if (distToPlayer2 < minDist){
+                        minDist = distToPlayer2;
+                        indexOfSmallest = counter;
+                    }
+
+                    counter++;
+                }
+            }
+        }
+
+        targetTile = new int[]{possibleTiles[indexOfSmallest][0], possibleTiles[indexOfSmallest][1]};
     }
 
     public int getOrientatedSpriteIndex() {
