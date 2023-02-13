@@ -6,6 +6,9 @@ public class KeyInputData {
     private static boolean shooting = false;
     private static boolean debugging = false;
 
+    private static long startedTurning = System.currentTimeMillis();
+
+    //TODO remove
     private static boolean swastikaMode = false;
 
     public static synchronized int getMovement() {
@@ -21,6 +24,9 @@ public class KeyInputData {
     }
 
     public static synchronized void setRotation(int rotation) {
+        if (rotation != KeyInputData.rotation){
+            startedTurning = System.currentTimeMillis();
+        }
         KeyInputData.rotation = rotation;
     }
 
@@ -46,6 +52,10 @@ public class KeyInputData {
 
     public static synchronized void setSwastikaMode(boolean swastikaMode) {
         KeyInputData.swastikaMode = swastikaMode;
+    }
+
+    public static synchronized long getStartedTurning() {
+        return startedTurning;
     }
 }
 

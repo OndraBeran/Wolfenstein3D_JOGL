@@ -23,7 +23,7 @@ public class Soldier {
     //TODO change to private
     public int[] targetTile;
 
-    private boolean idle = true;
+    private boolean idle = false;
 
     public Soldier(double x, double y, double idleX, double idleY, Player player) {
         this.x = x;

@@ -47,7 +47,9 @@ public class Player {
 
         double increment = timeSinceUpdate / (1000 / 60.0);
 
-        setAngle(angle + (KeyInputData.getRotation() * angleVelocity * increment));
+        double rotationSpeed = adjustedAngleVelocity(System.currentTimeMillis() - KeyInputData.getStartedTurning());
+
+        setAngle(angle + (KeyInputData.getRotation() * rotationSpeed * increment));
 
         double newY = yCoor - KeyInputData.getMovement() * (Math.sin(Math.toRadians(angle)) * velocity * increment);
         double newX = xCoor + KeyInputData.getMovement() * (Math.cos(Math.toRadians(angle)) * velocity * increment);
@@ -118,5 +120,13 @@ public class Player {
         double angleCos = dotProduct / (playerVector.vectorMagnitude() * enemyVector.vectorMagnitude());
 
         return Math.toDegrees(Math.acos(angleCos));
+    }
+
+    private double adjustedAngleVelocity(long time){
+        if (time < 100){
+            return time / 100.0 * angleVelocity;
+        } else {
+            return angleVelocity;
+        }
     }
 }
