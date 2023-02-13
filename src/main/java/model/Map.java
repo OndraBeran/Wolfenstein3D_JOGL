@@ -36,6 +36,10 @@ public class Map {
     public static boolean isWall(double x, double y){
         return walls[coordToTile(y)] [coordToTile(x)];
     }
+
+    public static boolean isWall(int x, int y){
+        return walls[y][x];
+    }
     
     public static int coordToTile(double coord){
         return (int) coord / TILE_SIZE;

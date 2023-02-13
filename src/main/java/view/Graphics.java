@@ -175,6 +175,10 @@ public class Graphics {
         for (Soldier soldier :
                 enemies) {
             drawMinimapTile(gl, Map.coordToTile(soldier.getX()), Map.coordToTile(soldier.getY()));
+
+            gl.glColor3d(0.5, 0, 1);
+
+            drawMinimapTile(gl, soldier.targetTile[0], soldier.targetTile[1]);
         }
     }
 

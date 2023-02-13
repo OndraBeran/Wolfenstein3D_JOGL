@@ -1,7 +1,9 @@
 package model;
 
+import java.util.Random;
+
 public class Soldier {
-    private final double IDLE_SPEED = 0.5;
+    private final double IDLE_SPEED = 12;
     private final int IDLE_ANIMATION = 150;
 
     private final double ENGAGED_SPEED = 24;
@@ -18,9 +20,10 @@ public class Soldier {
     private Point[] idleTargets = new Point[2];
     private int targetIndex = 1;
 
-    private int[] targetTile;
+    //TODO change to private
+    public int[] targetTile;
 
-    private boolean idle = false;
+    private boolean idle = true;
 
     public Soldier(double x, double y, double idleX, double idleY, Player player) {
         this.x = x;
@@ -46,70 +49,68 @@ public class Soldier {
     }
 
     private void updatePos(Point player, double playerX, double playerY){
-        if (idle){
-            Point normDirVector = Point.normalizeVector(Point.pointsToVector(idleTargets[idleTargets.length - 1 - targetIndex], idleTargets[targetIndex]));
-            x += normDirVector.getX() * IDLE_SPEED;
-            y += normDirVector.getY() * IDLE_SPEED;
+        // eight possible directions
+        Point[] dirVects = new Point[8];
 
-            if (Math.round(x) == Math.round(idleTargets[targetIndex].getX()) && Math.round(y) == Math.round(idleTargets[targetIndex].getY())){
-                targetIndex = 1 - targetIndex;
-            }
-        } else {
-            // eight possible directions
-            Point[] dirVects = new Point[8];
+        double angle = Point.angleToXAxis(player);
+        Point target = Map.centerOfTile(targetTile[0], targetTile[1]);
 
-            double angle = Point.angleToXAxis(player);
+        double minDist = Double.MAX_VALUE;
+        int indexOfSmallest = 0;
 
-            double minDist = Double.MAX_VALUE;
-            int indexOfSmallest = 0;
+        for (int i = 0; i < 8; i++) {
+            dirVects[i] = Point.normalVectFromAngle(angle);
 
-            for (int i = 0; i < 8; i++) {
-                dirVects[i] = Point.normalVectFromAngle(angle);
+            double newX = x + dirVects[i].getX();
+            double newY = y + dirVects[i].getY();
 
-                double newX = x + dirVects[i].getX();
-                double newY = y + dirVects[i].getY();
+            if (!Map.isWall(newX, newY)){
+                double dist = Point.distance(x + dirVects[i].getX(), y + dirVects[i].getY(), target.getX(), target.getY());
 
-                if (!Map.isWall(newX, newY)){
-                    double dist = Point.distance(x + dirVects[i].getX(), y + dirVects[i].getY(), playerX, playerY);
-
-                    if (dist < minDist) {
-                        indexOfSmallest = i;
-                        minDist = dist;
-                    }
+                if (dist < minDist) {
+                    indexOfSmallest = i;
+                    minDist = dist;
                 }
-
-                angle += 45;
             }
 
-            x += dirVects[indexOfSmallest].getX() * ENGAGED_SPEED;
-            y += dirVects[indexOfSmallest].getY() * ENGAGED_SPEED;
-
-            switch (indexOfSmallest){
-                case 0:
-                    orientatedSpriteIndex = 4;
-                    break;
-                case 1:
-                    orientatedSpriteIndex = 3;
-                    break;
-                case 2:
-                    orientatedSpriteIndex = 2;
-                    break;
-                case 3:
-                    orientatedSpriteIndex = 1;
-                    break;
-                case 4:
-                    orientatedSpriteIndex = 0;
-                    break;
-                case 5:
-                    orientatedSpriteIndex = 7;
-                    break;
-                case 6:
-                    orientatedSpriteIndex = 6;
-                    break;
-                case 7:
-                    orientatedSpriteIndex = 5;
-            }
+            angle += 45;
         }
+
+        double speed = idle ? IDLE_SPEED : ENGAGED_SPEED;
+
+        x += dirVects[indexOfSmallest].getX() * speed;
+        y += dirVects[indexOfSmallest].getY() * speed;
+
+        if (targetReached()){
+            chooseTargetTile();
+        }
+
+        switch (indexOfSmallest){
+            case 0:
+                orientatedSpriteIndex = 4;
+                break;
+            case 1:
+                orientatedSpriteIndex = 7;
+                break;
+            case 2:
+                orientatedSpriteIndex = 6;
+                break;
+            case 3:
+                orientatedSpriteIndex = 5;
+                break;
+            case 4:
+                orientatedSpriteIndex = 0;
+                break;
+            case 5:
+                orientatedSpriteIndex = 3;
+                break;
+            case 6:
+                orientatedSpriteIndex = 2;
+                break;
+            case 7:
+                orientatedSpriteIndex = 1;
+        }
+
     }
 
 
@@ -143,6 +144,12 @@ public class Soldier {
     }
 
     private void chooseTargetTile(){
+        //select random tile if enemy is idle
+        if (idle){
+            targetTile = randomTile();
+            return;
+        }
+
         int currentX = Map.coordToTile(x);
         int currentY = Map.coordToTile(y);
 
@@ -154,10 +161,11 @@ public class Soldier {
 
         for (int i = currentX - 1; i <= currentX + 1; i++) {
             for (int j = currentY - 1; j <= currentY + 1; j++){
-                if (i != currentX && j != currentY){
+                if (!(i == currentX && j == currentY) && !Map.isWall(i, j)){
                     possibleTiles[counter] = new int[]{i, j};
 
                     double distToPlayer2 = Math.pow(i - Map.coordToTile(player.getxCoor()), 2) + Math.pow(j - Map.coordToTile(player.getyCoor()), 2);
+
                     if (distToPlayer2 < minDist){
                         minDist = distToPlayer2;
                         indexOfSmallest = counter;
@@ -169,6 +177,30 @@ public class Soldier {
         }
 
         targetTile = new int[]{possibleTiles[indexOfSmallest][0], possibleTiles[indexOfSmallest][1]};
+    }
+
+    private int[] randomTile(){
+        int[] tile = null;
+        Random r = new Random();
+
+        int currentX = Map.coordToTile(this.x);
+        int currentY = Map.coordToTile(this.y);
+
+        while (tile == null){
+            int x = currentX + r.nextInt(3) - 1;
+            int y = currentY + r.nextInt(3) - 1;
+
+            if (!(x == currentX && y == currentY) && !Map.isWall(x, y)){
+                tile = new int[]{x, y};
+            }
+
+        }
+
+        return tile;
+    }
+
+    private boolean targetReached(){
+        return Point.distance(Map.centerOfTile(targetTile[0], targetTile[1]), new Point(x, y)) <= ENGAGED_SPEED;
     }
 
     public int getOrientatedSpriteIndex() {

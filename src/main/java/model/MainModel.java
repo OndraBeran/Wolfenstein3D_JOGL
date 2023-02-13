@@ -9,12 +9,15 @@ import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainModel {
+    //TODO change to private
     public final Player player;
+
     private final int RESOLUTION;
     private final double FOV;
 
     public AtomicBoolean writingToFirst = new AtomicBoolean(true);
 
+    //TODO change to private
     public Soldier[] enemies = new Soldier[1];
 
     protected CyclicBarrier barrier;
