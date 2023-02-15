@@ -23,6 +23,12 @@ public class Soldier {
     //TODO change to private
     public int[] targetTile;
 
+    private boolean shooting = false;
+    private long lastShot = System.currentTimeMillis();
+    private int shootingSpriteIndex = 0;
+    private final int TIME_BETWEEN_SHOTS = 2000;
+    private final double MAX_DIST_TO_SHOOT = 1000;
+
     private boolean idle = false;
 
     public Soldier(double x, double y, double idleX, double idleY, Player player) {
@@ -38,13 +44,19 @@ public class Soldier {
 
     public void update(Point playerDirVect, double playerX, double playerY){
         if (System.currentTimeMillis() - lastUpdate > IDLE_ANIMATION){
-            updatePos(playerDirVect, playerX, playerY);
-            lastUpdate = System.currentTimeMillis();
-            if (currentSpriteStage == 4){
-                currentSpriteStage = 1;
-            } else {
-                currentSpriteStage++;
+            if (canShoot()){
+                shoot();
             }
+
+            if (shooting){
+                updateSpriteShooting();
+            } else {
+                updatePos(playerDirVect, playerX, playerY);
+                updateSpriteMovement();
+            }
+
+            lastUpdate = System.currentTimeMillis();
+
         }
     }
 
@@ -113,6 +125,36 @@ public class Soldier {
 
     }
 
+    private void updateSpriteMovement(){
+        if (currentSpriteStage == 4){
+            currentSpriteStage = 1;
+        } else {
+            currentSpriteStage++;
+        }
+    }
+
+    private void updateSpriteShooting(){
+        if (currentSpriteStage == 2){
+            currentSpriteStage = 0;
+            shooting = false;
+        } else {
+            currentSpriteStage++;
+        }
+    }
+
+    private void shoot(){
+        shooting = true;
+        lastShot = System.currentTimeMillis();
+        orientatedSpriteIndex = 8;
+        currentSpriteStage = -1;
+    }
+
+    private boolean canShoot(){
+        double dist = Point.distance(x, y, player.getxCoor(), player.getyCoor());
+        long timeSinceLastShot = System.currentTimeMillis() - lastShot;
+
+        return dist < MAX_DIST_TO_SHOOT && timeSinceLastShot > TIME_BETWEEN_SHOTS;
+    }
 
     public double getX() {
         return x;
@@ -132,15 +174,6 @@ public class Soldier {
 
     public int getCurrentSpriteStage() {
         return currentSpriteStage;
-    }
-
-    public Point getNormalDirVector(){
-        if (idle){
-            return Point.normalizeVector(Point.pointsToVector(idleTargets[idleTargets.length - 1 - targetIndex], idleTargets[targetIndex]));
-        } else {
-            //TODO doplnit
-            return new Point(1, 0);
-        }
     }
 
     private void chooseTargetTile(){
