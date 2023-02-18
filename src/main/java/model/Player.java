@@ -74,6 +74,10 @@ public class Player {
         }
     }
 
+    public Point getCoordinates(){
+        return new Point(xCoor, yCoor);
+    }
+
     public Gun getGun() {
         return gun;
     }
@@ -104,6 +108,8 @@ public class Player {
         lastUpdate = System.currentTimeMillis();
 
         gun = new Gun(enemies);
+
+        RayCaster.setPlayer(this);
     }
 
     public double distToEnemy(Soldier soldier){

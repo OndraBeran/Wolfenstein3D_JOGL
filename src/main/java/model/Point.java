@@ -4,6 +4,8 @@ public class Point {
     private final double x;
     private final double y;
 
+    public static final Point outOfBounds = new Point(Double.MAX_VALUE, Double.MAX_VALUE);
+
     public Point(double x, double y) {
         this.x = x;
         this.y = y;
