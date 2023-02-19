@@ -156,7 +156,6 @@ public class Player {
     private void shoot(){
         gun.setShooting(true);
         gun.setLastShot(System.currentTimeMillis());
-        System.out.println(1);
         checkHit();
     }
 

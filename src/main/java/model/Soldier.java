@@ -8,7 +8,7 @@ public class Soldier {
 
     private final int DYING_ANIMATION = 100;
 
-    private final double ENGAGED_SPEED = 0;
+    private final double ENGAGED_SPEED = 24;
 
     private double x;
     private double y;
@@ -19,7 +19,7 @@ public class Soldier {
 
     private Player player;
 
-    private Point[] idleTargets = new Point[2];
+    //private Point[] idleTargets = new Point[2];
     private int targetIndex = 1;
 
     //TODO change to private
@@ -37,13 +37,10 @@ public class Soldier {
     private boolean dying = false;
     private boolean dead = false;
 
-    public Soldier(double x, double y, double idleX, double idleY, Player player) {
+    public Soldier(double x, double y, Player player) {
         this.x = x;
         this.y = y;
         this.player = player;
-
-        idleTargets[0] = new Point(x, y);
-        idleTargets[1] = new Point(idleX, idleY);
 
         chooseTargetTile();
     }
@@ -117,25 +114,25 @@ public class Soldier {
                 orientatedSpriteIndex = 4;
                 break;
             case 1:
-                orientatedSpriteIndex = 7;
+                orientatedSpriteIndex = 5;
                 break;
             case 2:
                 orientatedSpriteIndex = 6;
                 break;
             case 3:
-                orientatedSpriteIndex = 5;
+                orientatedSpriteIndex = 7;
                 break;
             case 4:
                 orientatedSpriteIndex = 0;
                 break;
             case 5:
-                orientatedSpriteIndex = 3;
+                orientatedSpriteIndex = 1;
                 break;
             case 6:
                 orientatedSpriteIndex = 2;
                 break;
             case 7:
-                orientatedSpriteIndex = 1;
+                orientatedSpriteIndex = 3;
         }
 
     }
