@@ -6,7 +6,7 @@ public class Soldier {
     private final double IDLE_SPEED = 12;
     private final int IDLE_ANIMATION = 150;
 
-    private final double ENGAGED_SPEED = 0;
+    private final double ENGAGED_SPEED = 24;
 
     private double x;
     private double y;

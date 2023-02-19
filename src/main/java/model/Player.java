@@ -164,31 +164,33 @@ public class Player {
         for (Soldier enemy:
                 enemies) {
         //check if enemy is in field of fire
-            double deltaX = Math.abs(xCoor - enemy.getX());
-            double deltaY = Math.abs(yCoor - enemy.getY());
+            Point playerEnemyVector = new Point(enemy.getX() - xCoor, enemy.getY() - yCoor);
+
 
             //tan angle = deltaY/deltaX
-            double angle = this.angle - Math.toDegrees(Math.atan2(deltaY, deltaX));
-            if (angle < 0) angle += 360;
+            double angle = Point.angleToXAxis(playerEnemyVector) - (360 - this.angle);
 
-            angle = 360 - angle;
+            double angleDiff = Math.abs(angle);
 
-            System.out.println(angle + " ///");
-
-            if (angle > 10){
+            if (angleDiff > 5){
                 continue;
             }
+
         //check if there is a wall between player and enemy
             double distToEnemy = Point.distance(getCoordinates(), enemy.getCoordinates());
 
-            Point playerEnemyVector = new Point(enemy.getX() - xCoor, enemy.getY() - yCoor);
+            double angleOfRay = this.angle + angle;
 
-            double angleOfRay = Point.angleToXAxis(playerEnemyVector);
-            double angleOfPlayer = Point.angleToXAxis(getStandardDirVector());
+            double distToWall = RayCaster.castRay(getCoordinates(), angleOfRay);
 
-            double angleDiff = angleOfRay - angleOfPlayer;
-
-            System.out.println(angleDiff);
+            if (distToWall > distToEnemy){
+                processHit(enemy);
+                break;
+            }
         }
+    }
+
+    private void processHit(Soldier enemy){
+        System.out.println("lolololo");
     }
 }
