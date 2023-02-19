@@ -6,7 +6,9 @@ public class Soldier {
     private final double IDLE_SPEED = 12;
     private final int IDLE_ANIMATION = 150;
 
-    private final double ENGAGED_SPEED = 24;
+    private final int DYING_ANIMATION = 100;
+
+    private final double ENGAGED_SPEED = 0;
 
     private double x;
     private double y;
@@ -31,6 +33,10 @@ public class Soldier {
 
     private boolean idle = false;
 
+    private int hp = 100;
+    private boolean dying = false;
+    private boolean dead = false;
+
     public Soldier(double x, double y, double idleX, double idleY, Player player) {
         this.x = x;
         this.y = y;
@@ -43,7 +49,16 @@ public class Soldier {
     }
 
     public void update(Point playerDirVect, double playerX, double playerY){
-        if (System.currentTimeMillis() - lastUpdate > IDLE_ANIMATION){
+        if (dead) return;
+
+        int animationSpeed = dying ? DYING_ANIMATION : IDLE_ANIMATION;
+        if (System.currentTimeMillis() - lastUpdate > animationSpeed){
+            if(dying){
+                updateSpriteDying();
+                lastUpdate = System.currentTimeMillis();
+                return;
+            }
+
             if (canShoot()){
                 shoot();
             }
@@ -137,6 +152,14 @@ public class Soldier {
         if (currentSpriteStage == 2){
             currentSpriteStage = 0;
             shooting = false;
+        } else {
+            currentSpriteStage++;
+        }
+    }
+
+    private void updateSpriteDying(){
+        if (currentSpriteStage == 4){
+            dead = true;
         } else {
             currentSpriteStage++;
         }
@@ -242,5 +265,18 @@ public class Soldier {
 
     public Point getCoordinates(){
         return new Point(x, y);
+    }
+
+    public void subtractHP(int amount){
+        hp -= amount;
+        if (hp <= 0){
+            dying = true;
+            orientatedSpriteIndex = 9;
+            currentSpriteStage = 0;
+        }
+    }
+
+    public boolean isDead() {
+        return dead;
     }
 }

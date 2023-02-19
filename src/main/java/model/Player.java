@@ -163,6 +163,7 @@ public class Player {
     private void checkHit(){
         for (Soldier enemy:
                 enemies) {
+            if (enemy.isDead()) continue;
         //check if enemy is in field of fire
             Point playerEnemyVector = new Point(enemy.getX() - xCoor, enemy.getY() - yCoor);
 
@@ -191,6 +192,6 @@ public class Player {
     }
 
     private void processHit(Soldier enemy){
-        System.out.println("lolololo");
+        enemy.subtractHP(gun.getDamage());
     }
 }

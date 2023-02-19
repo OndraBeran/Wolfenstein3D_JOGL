@@ -154,9 +154,9 @@ public class EventListener implements GLEventListener {
 
     private void loadEnemies(CountDownLatch latch){
         Thread loadEnemies = new Thread(() -> {
-            enemySprites = new ImageResource[9][];
+            enemySprites = new ImageResource[10][];
 
-            for (int i = 0; i < enemySprites.length - 1; i++) {
+            for (int i = 0; i < enemySprites.length - 2; i++) {
                 enemySprites[i] = new ImageResource[5];
 
                 enemySprites[i][0] = new ImageResource("/gard/GARDA" + (i + 1) + ".png");
@@ -171,6 +171,14 @@ public class EventListener implements GLEventListener {
             enemySprites[8][0] = new ImageResource("/gard/GARDF0.png");
             enemySprites[8][1] = new ImageResource("/gard/GARDG0.png");
             enemySprites[8][2] = new ImageResource("/gard/GARDH0.png");
+
+            enemySprites[9] = new ImageResource[5];
+
+            enemySprites[9][0] = new ImageResource("/gard/GARDI0.png");
+            enemySprites[9][1] = new ImageResource("/gard/GARDK0.png");
+            enemySprites[9][2] = new ImageResource("/gard/GARDL0.png");
+            enemySprites[9][3] = new ImageResource("/gard/GARDM0.png");
+            enemySprites[9][4] = new ImageResource("/gard/GARDN0.png");
 
             latch.countDown();
         }, "loadEnemy");
