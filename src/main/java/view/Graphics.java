@@ -145,6 +145,38 @@ public class Graphics {
         gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
     }
 
+    public static void drawImage(GL2 gl, ImageResource img){
+        Texture tex = img.getTexture();
+
+        gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
+
+        if (tex != null){
+            gl.glBindTexture(GL2.GL_TEXTURE_2D, tex.getTextureObject());
+        }
+
+        gl.glEnable(GL2.GL_BLEND);
+        gl.glBlendFunc(GL2.GL_ONE, GL2.GL_ONE_MINUS_SRC_ALPHA);
+
+        gl.glColor3f(1, 1, 1);
+        gl.glBegin(GL2.GL_QUADS);
+
+        gl.glTexCoord2d(0, 0);
+        gl.glVertex2d(0, 1);
+
+        gl.glTexCoord2d(1, 0);
+        gl.glVertex2d(1979, 1);
+
+        gl.glTexCoord2d(1, 1);
+        gl.glVertex2d(1979, -1);
+
+        gl.glTexCoord2d(0, 1);
+        gl.glVertex2d(0, -1);
+
+        gl.glEnd();
+
+        gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
+    }
+
     public static void drawMinimap(GL2 gl, Player player, Soldier[] enemies){
         gl.glColor3d(0.5, 0.5, 0.5);
         gl.glBegin(GL2.GL_QUADS);

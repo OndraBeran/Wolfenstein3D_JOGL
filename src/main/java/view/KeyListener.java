@@ -7,9 +7,12 @@ import java.util.Arrays;
 
 public class KeyListener implements com.jogamp.newt.event.KeyListener {
     private static int[] keyEvents = new int[]{0, 0};
+    public static boolean firstKeyPressed = false;
 
     @Override
     public void keyPressed(KeyEvent e) {
+        if (!firstKeyPressed) firstKeyPressed = true;
+
         switch (e.getKeyCode()){
             case KeyEvent.VK_LEFT:
                 KeyInputData.setRotation(1);

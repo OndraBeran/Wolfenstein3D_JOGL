@@ -3,11 +3,13 @@ package view;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
+import com.jogamp.opengl.util.awt.TextRenderer;
 import model.KeyInputData;
 import model.MainModel;
 import model.ModelLoop;
 import model.renderdata.RenderData;
 
+import java.awt.*;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
@@ -21,9 +23,14 @@ public class EventListener implements GLEventListener {
 
     private CyclicBarrier barrier;
 
+    TextRenderer textRenderer;
+
+    private ImageResource introImg;
     private ImageResource[] textures;
     private ImageResource[][] enemySprites;
     private ImageResource[] gunSprites;
+
+    boolean gameStarted = false;
 
     public EventListener(int SCREEN_WIDTH, MainModel model, int[] keyEvents, CyclicBarrier barrier) {
         this.SCREEN_WIDTH = SCREEN_WIDTH;
@@ -35,12 +42,11 @@ public class EventListener implements GLEventListener {
     public void init(GLAutoDrawable glAutoDrawable) {
         GL2 gl = glAutoDrawable.getGL().getGL2();
 
+        textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 36));
+
         defaultUnits(gl);
 
         loadAssets();
-
-        ModelLoop.initLoop(model);
-        ModelLoop.start();
     }
 
     @Override
@@ -55,6 +61,12 @@ public class EventListener implements GLEventListener {
         gl.glEnable(GL2.GL_TEXTURE_2D);
 
         Graphics.clear(gl);
+
+        if (!gameStarted){
+            Graphics.drawImage(gl, introImg);
+            setGameStarted(KeyListener.firstKeyPressed);
+            return;
+        }
 
         //draw floor and ceiling
         Graphics.drawBackground(gl, 0, SCREEN_WIDTH - 1);
@@ -124,8 +136,9 @@ public class EventListener implements GLEventListener {
     }
 
     private void loadAssets(){
-        CountDownLatch latch = new CountDownLatch(3);
+        CountDownLatch latch = new CountDownLatch(4);
 
+        loadIntroImg(latch);
         loadTextures(latch);
         loadEnemies(latch);
         loadGuns(latch);
@@ -135,6 +148,16 @@ public class EventListener implements GLEventListener {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    private void loadIntroImg(CountDownLatch latch){
+        Thread loadIntroImg = new Thread(() -> {
+            introImg = new ImageResource("/intro_graphic.jpg");
+
+            latch.countDown();
+        }, "loadIntroImg");
+
+        loadIntroImg.start();
     }
 
     private void loadTextures(CountDownLatch latch){
@@ -216,5 +239,24 @@ public class EventListener implements GLEventListener {
         gl.glOrtho(-3, 1, SCREEN_HEIGHT / (SCREEN_WIDTH / 4.0), 0, 0, 1);
 
         gl.glMatrixMode(GL2.GL_MODELVIEW);
+    }
+
+    private void startGame(){
+        ModelLoop.initLoop(model);
+        ModelLoop.start();
+        try {
+            barrier.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (BrokenBarrierException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setGameStarted(boolean started){
+        if (started){
+            startGame();
+        }
+        gameStarted = started;
     }
 }
