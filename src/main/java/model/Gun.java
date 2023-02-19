@@ -9,21 +9,7 @@ public class Gun {
     private final int TIME_BETWEEN_SHOTS = 700;
     private long lastShot = 0;
 
-    double playerAngle = 0;
-
-    private Soldier[] enemies;
-
-    public Gun(Soldier[] enemies) {
-        this.enemies = enemies;
-    }
-
-    protected void update(double angle){
-        playerAngle = angle;
-
-        if (KeyInputData.isShooting() && canShoot()){
-            shoot();
-        }
-
+    protected void update(){
         if (System.currentTimeMillis() - lastUpdate > 128 && shooting){
             if (currentSprite == 2){
                 currentSprite = 0;
@@ -41,21 +27,31 @@ public class Gun {
         return currentSprite;
     }
 
-    private boolean canShoot(){
-        long timeSinceLastShot = (System.currentTimeMillis() - lastShot);
-
-        return timeSinceLastShot > TIME_BETWEEN_SHOTS;
+    public long getLastUpdate() {
+        return lastUpdate;
     }
 
-    private void shoot(){
-        shooting = true;
-        lastShot = System.currentTimeMillis();
+    public void setLastUpdate(long lastUpdate) {
+        this.lastUpdate = lastUpdate;
     }
 
-    private void checkHit(){
-        for (Soldier enemy:
-             enemies) {
+    public boolean isShooting() {
+        return shooting;
+    }
 
-        }
+    public void setShooting(boolean shooting) {
+        this.shooting = shooting;
+    }
+
+    public long getLastShot() {
+        return lastShot;
+    }
+
+    public void setLastShot(long lastShot) {
+        this.lastShot = lastShot;
+    }
+
+    public int getTIME_BETWEEN_SHOTS() {
+        return TIME_BETWEEN_SHOTS;
     }
 }

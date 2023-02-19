@@ -6,9 +6,19 @@ public class RayCaster {
 
     private static Player player;
 
+    public static double castRay(Point start, double angle){
+        Ray ray = new Ray(start, angle);
 
+        Point xIntersect = xLineWallIntersect(ray);
+        Point yIntersect = yLineWallIntersect(ray);
 
-    public static RayData castRayFromPlayer(double angle){
+        double xDist = Point.distance(start, xIntersect);
+        double yDist = Point.distance(start, yIntersect);
+
+        return Double.min(xDist, yDist);
+    }
+
+    public static RayData castRenderRay(double angle){
         Ray ray = new Ray(player.getCoordinates(), angle);
 
         Point xIntersect = xLineWallIntersect(ray);
@@ -25,8 +35,6 @@ public class RayCaster {
           return new RayData(removeFisheye(yDist, angleToPlayer), false, Map.coordInTile(yIntersect.getY()));
         }
     }
-
-    
 
     /** @noinspection IntegerDivisionInFloatingPointContext*/
     private static Point firsIntersectY(Ray ray){

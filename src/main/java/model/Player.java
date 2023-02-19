@@ -8,11 +8,13 @@ public class Player {
     private double yCoor;
     private double angle;
     private final double velocity = 16;
-    private double angleVelocity = 2;
+    private final double angleVelocity = 2;
 
-    private long lastUpdate = 0;
+    private long lastUpdate;
 
     private Gun gun;
+
+    private Soldier[] enemies;
 
     public double getxCoor() {
         return xCoor;
@@ -59,9 +61,16 @@ public class Player {
             yCoor = newY;
         }
 
-        gun.update(angle);
+        updateGun();
 
         lastUpdate = System.currentTimeMillis();
+    }
+
+    private void updateGun(){
+        if (KeyInputData.isShooting() && canShoot()){
+            shoot();
+        }
+        gun.update();
     }
 
     public void setAngle(double angle) {
@@ -103,11 +112,12 @@ public class Player {
         this.xCoor = xCoor;
         this.yCoor = yCoor;
         this.angle = angle;
+        this.enemies = enemies;
         FOV = fov;
 
         lastUpdate = System.currentTimeMillis();
 
-        gun = new Gun(enemies);
+        gun = new Gun();
 
         RayCaster.setPlayer(this);
     }
@@ -133,6 +143,52 @@ public class Player {
             return time / 100.0 * angleVelocity;
         } else {
             return angleVelocity;
+        }
+    }
+
+
+    private boolean canShoot(){
+        long timeSinceLastShot = (System.currentTimeMillis() - gun.getLastShot());
+
+        return timeSinceLastShot > gun.getTIME_BETWEEN_SHOTS();
+    }
+
+    private void shoot(){
+        gun.setShooting(true);
+        gun.setLastShot(System.currentTimeMillis());
+        System.out.println(1);
+        checkHit();
+    }
+
+    private void checkHit(){
+        for (Soldier enemy:
+                enemies) {
+        //check if enemy is in field of fire
+            double deltaX = Math.abs(xCoor - enemy.getX());
+            double deltaY = Math.abs(yCoor - enemy.getY());
+
+            //tan angle = deltaY/deltaX
+            double angle = this.angle - Math.toDegrees(Math.atan2(deltaY, deltaX));
+            if (angle < 0) angle += 360;
+
+            angle = 360 - angle;
+
+            System.out.println(angle + " ///");
+
+            if (angle > 10){
+                continue;
+            }
+        //check if there is a wall between player and enemy
+            double distToEnemy = Point.distance(getCoordinates(), enemy.getCoordinates());
+
+            Point playerEnemyVector = new Point(enemy.getX() - xCoor, enemy.getY() - yCoor);
+
+            double angleOfRay = Point.angleToXAxis(playerEnemyVector);
+            double angleOfPlayer = Point.angleToXAxis(getStandardDirVector());
+
+            double angleDiff = angleOfRay - angleOfPlayer;
+
+            System.out.println(angleDiff);
         }
     }
 }

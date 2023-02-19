@@ -108,7 +108,7 @@ public class MainModel {
 
         for (int i = 0; i < RESOLUTION; i++) {
 
-            data[i] = RayCaster.castRayFromPlayer(startAngle);
+            data[i] = RayCaster.castRenderRay(startAngle);
             startAngle += increment;
         }
 
