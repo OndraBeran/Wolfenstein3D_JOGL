@@ -53,8 +53,7 @@ public class Map {
         return new Point(x * TILE_SIZE + (TILE_SIZE / 2), y * TILE_SIZE + (TILE_SIZE / 2));
     }
 
-    public static void loadMap(String path){
-        walls = MapLoader.load(path);
+    public static void setWalls(boolean[][] walls) {
+        Map.walls = walls;
     }
-
 }

@@ -9,6 +9,7 @@ import model.Player;
 import model.Soldier;
 
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 
 public class Graphics {
     private static final int TEXTURE_SIZE = 128;
@@ -188,7 +189,7 @@ public class Graphics {
         gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
     }
 
-    public static void drawMinimap(GL2 gl, Player player, Soldier[] enemies){
+    public static void drawMinimap(GL2 gl, Player player, ArrayList<Soldier> enemies){
         gl.glColor3d(0.5, 0.5, 0.5);
         gl.glBegin(GL2.GL_QUADS);
 

@@ -1,5 +1,7 @@
 package model;
 
+import java.util.ArrayList;
+
 public class Player {
 
     private final double FOV;
@@ -20,7 +22,7 @@ public class Player {
 
     private Gun gun;
 
-    private Soldier[] enemies;
+    private ArrayList<Soldier> enemies;
 
     public double getxCoor() {
         return xCoor;
@@ -133,11 +135,12 @@ public class Player {
         return dead;
     }
 
-    public Player(double xCoor, double yCoor, double angle, double fov, Soldier[] enemies) {
+
+
+    public Player(double xCoor, double yCoor, double angle, double fov) {
         this.xCoor = xCoor;
         this.yCoor = yCoor;
         this.angle = angle;
-        this.enemies = enemies;
         FOV = fov;
 
         lastUpdate = System.currentTimeMillis();
@@ -227,5 +230,9 @@ public class Player {
             HP = 0;
             dead = true;
         }
+    }
+
+    public void setEnemies(ArrayList<Soldier> enemies) {
+        this.enemies = enemies;
     }
 }

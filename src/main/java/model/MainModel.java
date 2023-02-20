@@ -5,12 +5,13 @@ import model.renderdata.PlayerData;
 import model.renderdata.RayData;
 import model.renderdata.RenderData;
 
+import java.util.ArrayList;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainModel {
     //TODO change to private
-    public final Player player;
+    public Player player;
 
     private final int RESOLUTION;
     private final double FOV;
@@ -18,7 +19,7 @@ public class MainModel {
     public AtomicBoolean writingToFirst = new AtomicBoolean(true);
 
     //TODO change to private
-    public Soldier[] enemies = new Soldier[1];
+    public ArrayList<Soldier> enemies;
 
     protected CyclicBarrier barrier;
 
@@ -26,10 +27,7 @@ public class MainModel {
     public RenderData renderData2;
 
     public MainModel(int res, double fov, String path, CyclicBarrier barrier) {
-        Map.loadMap(path);
-        player = new Player(53.5 * Map.getTILE_SIZE(), 62.5 * Map.getTILE_SIZE(), 90, fov, enemies);
-
-        enemies[0] = new Soldier(44.5 * Map.getTILE_SIZE(), 55.5 * Map.getTILE_SIZE(), player);
+        MapLoader.load(path, this);
         /*enemies[1] = new Soldier(45.5 * Map.getTILE_SIZE(), 55.5 * Map.getTILE_SIZE(), player);
         enemies[2] = new Soldier(46.5 * Map.getTILE_SIZE(), 55.5 * Map.getTILE_SIZE(), player);
         enemies[3] = new Soldier(47.5 * Map.getTILE_SIZE(), 55.5 * Map.getTILE_SIZE(), player);*/
@@ -46,8 +44,8 @@ public class MainModel {
     }
 
     private void updateEnemies(){
-        for (int i = 0; i < enemies.length; i++) {
-            enemies[i].update(player.getStandardDirVector(), player.getxCoor(), player.getyCoor());
+        for (int i = 0; i < enemies.size(); i++) {
+            enemies.get(i).update(player.getStandardDirVector(), player.getxCoor(), player.getyCoor());
         }
     }
 
@@ -68,10 +66,10 @@ public class MainModel {
     }
 
     private EnemyData[] prepareEnemyData(){
-        EnemyData[] result = new EnemyData[enemies.length];
+        EnemyData[] result = new EnemyData[enemies.size()];
 
-        for (int i = 0; i < enemies.length; i++) {
-            result[i] = renderEnemy(enemies[i]);
+        for (int i = 0; i < enemies.size(); i++) {
+            result[i] = renderEnemy(enemies.get(i));
         }
 
         return result;
@@ -116,5 +114,13 @@ public class MainModel {
         }
 
         return data;
+    }
+
+    public void setEnemies(ArrayList<Soldier> enemies) {
+        this.enemies = enemies;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 }

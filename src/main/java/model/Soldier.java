@@ -38,10 +38,9 @@ public class Soldier {
     private boolean dying = false;
     private boolean dead = false;
 
-    public Soldier(double x, double y, Player player) {
+    public Soldier(double x, double y) {
         this.x = x;
         this.y = y;
-        this.player = player;
 
         chooseTargetTile();
     }
@@ -221,6 +220,10 @@ public class Soldier {
 
     public int getCurrentSpriteStage() {
         return currentSpriteStage;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
     private void chooseTargetTile(){
