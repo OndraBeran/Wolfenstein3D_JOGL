@@ -11,7 +11,10 @@ public class KeyListener implements com.jogamp.newt.event.KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (!firstKeyPressed) firstKeyPressed = true;
+        if (!firstKeyPressed){
+            firstKeyPressed = true;
+            return;
+        }
 
         switch (e.getKeyCode()){
             case KeyEvent.VK_LEFT:

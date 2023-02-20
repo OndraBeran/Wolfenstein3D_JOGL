@@ -4,6 +4,7 @@ import com.jogamp.opengl.util.FPSAnimator;
 import model.MainModel;
 import view.Renderer;
 
+import java.awt.*;
 import java.util.Arrays;
 import java.util.concurrent.CyclicBarrier;
 

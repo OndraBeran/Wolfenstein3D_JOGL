@@ -10,6 +10,8 @@ import model.ModelLoop;
 import model.renderdata.RenderData;
 
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
@@ -31,6 +33,8 @@ public class EventListener implements GLEventListener {
     private ImageResource[] gunSprites;
 
     boolean gameStarted = false;
+    float promptColor = 0;
+    long lastChange = 0;
 
     public EventListener(int SCREEN_WIDTH, MainModel model, int[] keyEvents, CyclicBarrier barrier) {
         this.SCREEN_WIDTH = SCREEN_WIDTH;
@@ -42,7 +46,17 @@ public class EventListener implements GLEventListener {
     public void init(GLAutoDrawable glAutoDrawable) {
         GL2 gl = glAutoDrawable.getGL().getGL2();
 
-        textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 36));
+        Graphics.init(SCREEN_WIDTH, SCREEN_HEIGHT);
+
+        try {
+            GraphicsEnvironment ge =
+                    GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("C:\\Users\\2019-e-beran\\IdeaProjects\\Wolfenstein3D_JOGL\\src\\main\\resources\\wolfenstein.ttf")));
+        } catch (IOException | FontFormatException e) {
+            e.printStackTrace();
+        }
+
+        textRenderer = new TextRenderer(new Font("Wolfenstein", Font.BOLD, 42));
 
         defaultUnits(gl);
 
@@ -65,6 +79,13 @@ public class EventListener implements GLEventListener {
         if (!gameStarted){
             Graphics.drawImage(gl, introImg);
             setGameStarted(KeyListener.firstKeyPressed);
+
+            //draw prompt
+            Graphics.drawText(textRenderer, "press any key to start", Graphics.TextPos.MIDDLE, promptColor);
+            if (System.currentTimeMillis() - lastChange > 500){
+                lastChange = System.currentTimeMillis();
+                promptColor = 1 - promptColor;
+            }
             return;
         }
 
