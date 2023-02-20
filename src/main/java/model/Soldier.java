@@ -8,7 +8,7 @@ public class Soldier {
 
     private final int DYING_ANIMATION = 100;
 
-    private final double ENGAGED_SPEED = 24;
+    private final double ENGAGED_SPEED = 0;
 
     private double x;
     private double y;

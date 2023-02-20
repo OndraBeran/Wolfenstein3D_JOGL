@@ -173,6 +173,8 @@ public class EventListener implements GLEventListener {
 
                 if (newLevelOpacity <= 0){
                     transitionOngoing = false;
+                    endLevelOpacity = 0;
+                    newLevelOpacity = 1;
                 }
             }
         }

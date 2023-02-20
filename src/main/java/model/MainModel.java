@@ -112,16 +112,20 @@ public class MainModel {
 
         Point enemyVector = new Point(soldier.getX() - player.getxCoor(), -(soldier.getY() - player.getyCoor()));
 
-        Point[] vecs = player.getFOVVectors();
+        double enemyVectAngle = Point.angleToXAxis(enemyVector);
 
-        double angle1 = Point.angle(vecs[0], enemyVector);
-        double angle2 = Point.angle(vecs[1], enemyVector);
+        double angleDiff = enemyVectAngle - player.getAngle();
 
-        if (angle1 + angle2 > 57 && angle1 + angle2 < 63){
-            posInFOV = (FOV - angle1) / FOV;
+        if (angleDiff > 0){
+            posInFOV = 0.5 - angleDiff / FOV;
         } else {
-            posInFOV = 2;
+            posInFOV = 0.5 - (angleDiff / FOV);
         }
+
+        System.out.println(enemyVectAngle);
+        System.out.println(angleDiff);
+        System.out.println(posInFOV);
+        System.out.println("-----------");
 
         return new EnemyData(player.distToEnemy(soldier), posInFOV, soldier.getCurrentSpriteStage(), soldier.getOrientatedSpriteIndex());
         //return result;
