@@ -116,19 +116,23 @@ public class MainModel {
 
         double angleDiff = enemyVectAngle - player.getAngle();
 
+        if(player.getAngle() >= 0 && player.getAngle() < 90
+            && enemyVectAngle >= 270 && enemyVectAngle < 360){
+            angleDiff -= 360;
+        }
+
+        if (player.getAngle() >= 270 && player.getAngle() < 360
+            && enemyVectAngle >= 0 && enemyVectAngle < 90){
+            angleDiff += 360;
+        }
+
         if (angleDiff > 0){
             posInFOV = 0.5 - angleDiff / FOV;
         } else {
             posInFOV = 0.5 - (angleDiff / FOV);
         }
 
-        System.out.println(enemyVectAngle);
-        System.out.println(angleDiff);
-        System.out.println(posInFOV);
-        System.out.println("-----------");
-
         return new EnemyData(player.distToEnemy(soldier), posInFOV, soldier.getCurrentSpriteStage(), soldier.getOrientatedSpriteIndex());
-        //return result;
     }
 
     private RayData[] castRays(){
