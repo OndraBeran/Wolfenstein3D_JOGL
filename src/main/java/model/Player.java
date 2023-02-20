@@ -3,10 +3,16 @@ package model;
 public class Player {
 
     private final double FOV;
+    private final int MIN_DIST_TO_WALL = 30;
 
     private double xCoor;
     private double yCoor;
     private double angle;
+
+    private int HP = 100;
+    private boolean dead = false;
+    private boolean invincible = true;
+
     private final double velocity = 16;
     private final double angleVelocity = 2;
 
@@ -45,6 +51,8 @@ public class Player {
     }
 
     public void update(){
+        if (dead) return;
+
         long timeSinceUpdate = System.currentTimeMillis() - lastUpdate;
 
         double increment = timeSinceUpdate / (1000 / 60.0);
@@ -57,6 +65,15 @@ public class Player {
         double newX = xCoor + KeyInputData.getMovement() * (Math.cos(Math.toRadians(angle)) * velocity * increment);
 
         if (!Map.isWall(newX, newY)){
+            if (Map.isWall(Map.coordToTile(newX) - 1, Map.coordToTile(newY)) && Map.coordInTile(newX) < MIN_DIST_TO_WALL){
+                newX = Map.coordToTile(newX) * Map.getTILE_SIZE() + MIN_DIST_TO_WALL;
+            } else if (Map.isWall(Map.coordToTile(newX) + 1, Map.coordToTile(newY)) && Map.coordInTile(newX) > Map.getTILE_SIZE() - MIN_DIST_TO_WALL){
+                newX = (Map.coordToTile(newX) + 1) * Map.getTILE_SIZE() - MIN_DIST_TO_WALL;
+            } else if (Map.isWall(Map.coordToTile(newX), Map.coordToTile(newY) - 1) && Map.coordInTile(newY) < MIN_DIST_TO_WALL){
+                newY = (Map.coordToTile(newY)) * Map.getTILE_SIZE() + MIN_DIST_TO_WALL;
+            } else if (Map.isWall(Map.coordToTile(newX), Map.coordToTile(newY) + 1) && Map.coordInTile(newY) > Map.getTILE_SIZE() - MIN_DIST_TO_WALL){
+                newY = (Map.coordToTile(newY) + 1) * Map.getTILE_SIZE() - MIN_DIST_TO_WALL;
+            }
             xCoor = newX;
             yCoor = newY;
         }
@@ -106,6 +123,14 @@ public class Player {
         vectors[1] = new Point(Math.cos(Math.toRadians(angle + (FOV / 2))), Math.sin(Math.toRadians(angle + (FOV / 2))));
 
         return vectors;
+    }
+
+    public int getHP() {
+        return HP;
+    }
+
+    public boolean isDead() {
+        return dead;
     }
 
     public Player(double xCoor, double yCoor, double angle, double fov, Soldier[] enemies) {
@@ -192,5 +217,15 @@ public class Player {
 
     private void processHit(Soldier enemy){
         enemy.subtractHP(gun.getDamage());
+    }
+
+    public void subtractHP(int amount){
+        if (dead || invincible) return;
+
+        HP -= amount;
+        if (HP <= 0) {
+            HP = 0;
+            dead = true;
+        }
     }
 }

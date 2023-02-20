@@ -12,6 +12,9 @@ import model.renderdata.RenderData;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
@@ -32,9 +35,11 @@ public class EventListener implements GLEventListener {
     private ImageResource[][] enemySprites;
     private ImageResource[] gunSprites;
 
-    boolean gameStarted = false;
-    float promptColor = 0;
-    long lastChange = 0;
+    private boolean gameStarted = false;
+    private float promptColor = 0;
+    private long lastChange = 0;
+
+    private double deadScreenOpacity = 0;
 
     public EventListener(int SCREEN_WIDTH, MainModel model, int[] keyEvents, CyclicBarrier barrier) {
         this.SCREEN_WIDTH = SCREEN_WIDTH;
@@ -49,14 +54,18 @@ public class EventListener implements GLEventListener {
         Graphics.init(SCREEN_WIDTH, SCREEN_HEIGHT);
 
         try {
+            URL font = getClass().getResource("/wolfenstein.ttf");
+
             GraphicsEnvironment ge =
                     GraphicsEnvironment.getLocalGraphicsEnvironment();
-            ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("C:\\Users\\2019-e-beran\\IdeaProjects\\Wolfenstein3D_JOGL\\src\\main\\resources\\wolfenstein.ttf")));
+            ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(font.toURI())));
         } catch (IOException | FontFormatException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
             e.printStackTrace();
         }
 
-        textRenderer = new TextRenderer(new Font("Wolfenstein", Font.BOLD, 42));
+        textRenderer = new TextRenderer(new Font("Wolfenstein", Font.PLAIN, 64));
 
         defaultUnits(gl);
 
@@ -129,11 +138,21 @@ public class EventListener implements GLEventListener {
         //draw gun
         Graphics.drawGun(gl, gunSprites[data.player().gunSprite()], SCREEN_WIDTH / 2, SCREEN_WIDTH / 4.0);
 
+        //draw status
+        Graphics.drawText(textRenderer, "HP: " + data.player().HP(), Graphics.TextPos.RIGHT, 1);
+
         if (KeyInputData.isDebugging()){
             //draw minimap
             minimapUnits(gl);
             Graphics.drawMinimap(gl, model.player, model.enemies);
             defaultUnits(gl);
+        }
+
+        if (data.player().isDead()){
+            Graphics.fillScreen(gl, 1, 0, 0, deadScreenOpacity);
+            if (deadScreenOpacity < 1){
+                deadScreenOpacity += 0.05;
+            }
         }
 
         //synchronize with model thread

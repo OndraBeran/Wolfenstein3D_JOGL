@@ -247,12 +247,25 @@ public class Graphics {
         Rectangle2D rect = renderer.getBounds(text);
 
         switch (position){
-            case LEFT -> renderer.draw(text, (int)textStartLeft(fontSize), TEXT_MARGIN);
+            case LEFT -> renderer.draw(text, (int)textStartLeft(fontSize), TEXT_MARGIN / 3);
             case MIDDLE -> renderer.draw(text, (int)textStartCenter(rect.getWidth()), TEXT_MARGIN / 2);
-            case RIGHT -> renderer.draw(text, (int)textStartRight(text, fontSize), TEXT_MARGIN);
+            case RIGHT -> renderer.draw(text, (int)textStartRight(text, fontSize), TEXT_MARGIN / 3);
         }
 
         renderer.endRendering();
+    }
+
+    public static void fillScreen(GL2 gl, double red, double green, double blue, double alpha){
+        gl.glColor4d(red, green, blue, alpha);
+
+        gl.glBegin(GL2.GL_QUADS);
+
+        gl.glVertex2d(0, 1);
+        gl.glVertex2d(WIDTH - 1, 1);
+        gl.glVertex2d(WIDTH - 1, -1);
+        gl.glVertex2d(0, -1);
+
+        gl.glEnd();
     }
 
     private static double textStartCenter(double width){

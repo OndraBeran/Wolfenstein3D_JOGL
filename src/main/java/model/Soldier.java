@@ -18,6 +18,7 @@ public class Soldier {
     private int orientatedSpriteIndex = 0;
 
     private Player player;
+    private int damageToBeSubtracted;
 
     //private Point[] idleTargets = new Point[2];
     private int targetIndex = 1;
@@ -147,6 +148,7 @@ public class Soldier {
 
     private void updateSpriteShooting(){
         if (currentSpriteStage == 2){
+            player.subtractHP(damageToBeSubtracted);
             currentSpriteStage = 0;
             shooting = false;
         } else {
@@ -167,13 +169,38 @@ public class Soldier {
         lastShot = System.currentTimeMillis();
         orientatedSpriteIndex = 8;
         currentSpriteStage = -1;
+
+        double distToPlayer = Point.distance(getCoordinates(), player.getCoordinates());
+        int chanceToHit = 7;
+
+        if (distToPlayer > 128 * 3) chanceToHit--;
+        if (distToPlayer > 128 * 5) chanceToHit--;
+        if (distToPlayer > 128 * 7) chanceToHit--;
+
+        Random r = new Random();
+        if (r.nextInt(10) + 1 < chanceToHit){
+            //calculate damage
+            int baseDamage = 30;
+
+            if (distToPlayer < 128 * 5)baseDamage += 20;
+            if (distToPlayer < 128 * 3)baseDamage += 20;
+
+            damageToBeSubtracted = baseDamage;
+        }
     }
 
     private boolean canShoot(){
-        double dist = Point.distance(x, y, player.getxCoor(), player.getyCoor());
+        double distToPlayer = Point.distance(getCoordinates(), player.getCoordinates());
         long timeSinceLastShot = System.currentTimeMillis() - lastShot;
 
-        return dist < MAX_DIST_TO_SHOOT && timeSinceLastShot > TIME_BETWEEN_SHOTS;
+        Point enemyPlayerVector = new Point(player.getxCoor() - x, -(player.getyCoor() - y));
+        double distToWall = RayCaster.castRay(getCoordinates(), Point.angleToXAxis(enemyPlayerVector));
+
+        if (distToWall < distToPlayer)return false;
+        if (distToPlayer > MAX_DIST_TO_SHOOT)return false;
+        if (timeSinceLastShot < TIME_BETWEEN_SHOTS) return false;
+
+        return true;
     }
 
     public double getX() {

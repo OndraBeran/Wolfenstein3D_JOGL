@@ -18,7 +18,7 @@ public class MainModel {
     public AtomicBoolean writingToFirst = new AtomicBoolean(true);
 
     //TODO change to private
-    public Soldier[] enemies = new Soldier[4];
+    public Soldier[] enemies = new Soldier[1];
 
     protected CyclicBarrier barrier;
 
@@ -30,9 +30,9 @@ public class MainModel {
         player = new Player(53.5 * Map.getTILE_SIZE(), 62.5 * Map.getTILE_SIZE(), 90, fov, enemies);
 
         enemies[0] = new Soldier(44.5 * Map.getTILE_SIZE(), 55.5 * Map.getTILE_SIZE(), player);
-        enemies[1] = new Soldier(45.5 * Map.getTILE_SIZE(), 55.5 * Map.getTILE_SIZE(), player);
+        /*enemies[1] = new Soldier(45.5 * Map.getTILE_SIZE(), 55.5 * Map.getTILE_SIZE(), player);
         enemies[2] = new Soldier(46.5 * Map.getTILE_SIZE(), 55.5 * Map.getTILE_SIZE(), player);
-        enemies[3] = new Soldier(47.5 * Map.getTILE_SIZE(), 55.5 * Map.getTILE_SIZE(), player);
+        enemies[3] = new Soldier(47.5 * Map.getTILE_SIZE(), 55.5 * Map.getTILE_SIZE(), player);*/
 
         RESOLUTION = res;
         FOV = fov;
@@ -78,7 +78,7 @@ public class MainModel {
     }
 
     private PlayerData preparePlayerData(){
-        return new PlayerData(player.getGun().getCurrentSprite());
+        return new PlayerData(player.getGun().getCurrentSprite(), player.getHP(), player.isDead());
     }
 
     private EnemyData renderEnemy(Soldier soldier){
