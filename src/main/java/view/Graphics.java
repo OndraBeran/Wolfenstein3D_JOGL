@@ -249,8 +249,9 @@ public class Graphics {
 
         switch (position){
             case LEFT -> renderer.draw(text, (int)textStartLeft(fontSize), TEXT_MARGIN / 3);
-            case MIDDLE -> renderer.draw(text, (int)textStartCenter(rect.getWidth()), TEXT_MARGIN / 2);
+            case CENTER_BOTTOM -> renderer.draw(text, (int) textStartCenterX(rect.getWidth()), TEXT_MARGIN / 2);
             case RIGHT -> renderer.draw(text, (int)textStartRight(text, fontSize), TEXT_MARGIN / 3);
+            case MIDDLE -> renderer.draw(text, (int) textStartCenterX(rect.getWidth()), (int)textStartCenterY(rect.getHeight()));
         }
 
         renderer.endRendering();
@@ -269,8 +270,12 @@ public class Graphics {
         gl.glEnd();
     }
 
-    private static double textStartCenter(double width){
+    private static double textStartCenterX(double width){
         return (WIDTH - width) / 2;
+    }
+
+    private static double textStartCenterY(double height){
+        return (HEIGHT - height) / 2;
     }
 
     private static double textStartLeft(int fontSize){
@@ -282,6 +287,6 @@ public class Graphics {
     }
 
     public enum TextPos{
-        LEFT, RIGHT, MIDDLE;
+        LEFT, RIGHT, CENTER_BOTTOM, MIDDLE;
     }
 }

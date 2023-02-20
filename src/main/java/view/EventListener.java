@@ -12,7 +12,6 @@ import model.renderdata.RenderData;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.concurrent.BrokenBarrierException;
@@ -94,7 +93,7 @@ public class EventListener implements GLEventListener {
             setGameStarted(KeyListener.firstKeyPressed);
 
             //draw prompt
-            Graphics.drawText(textRenderer, "press any key to start", Graphics.TextPos.MIDDLE, promptColor);
+            Graphics.drawText(textRenderer, "press any key to start", Graphics.TextPos.CENTER_BOTTOM, promptColor);
             if (System.currentTimeMillis() - lastChange > 500){
                 lastChange = System.currentTimeMillis();
                 promptColor = 1 - promptColor;
@@ -153,9 +152,11 @@ public class EventListener implements GLEventListener {
         }
 
         if (data.player().isDead()){
-            Graphics.fillScreen(gl, 1, 0, 0, deadScreenOpacity);
+            Graphics.fillScreen(gl, 0.7, 0, 0.1, deadScreenOpacity);
             if (deadScreenOpacity < 1){
                 deadScreenOpacity += 0.05;
+            } else {
+                Graphics.drawText(textRenderer, "press r to restart", Graphics.TextPos.MIDDLE, 1);
             }
         }
 

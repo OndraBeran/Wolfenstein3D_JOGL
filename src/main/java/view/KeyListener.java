@@ -38,6 +38,9 @@ public class KeyListener implements com.jogamp.newt.event.KeyListener {
             case KeyEvent.VK_F5:
                 KeyInputData.setSwastikaMode(!KeyInputData.isSwastikaMode());
                 break;
+            case KeyEvent.VK_R:
+                KeyInputData.setRestart(true);
+                break;
         }
     }
 

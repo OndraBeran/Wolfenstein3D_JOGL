@@ -8,7 +8,9 @@ public class Soldier {
 
     private final int DYING_ANIMATION = 100;
 
-    private final double ENGAGED_SPEED = 0;
+    private final double ENGAGED_SPEED = 24;
+
+    private final int WIDTH = 50;
 
     private double x;
     private double y;
@@ -104,6 +106,16 @@ public class Soldier {
 
         x += dirVects[indexOfSmallest].getX() * speed;
         y += dirVects[indexOfSmallest].getY() * speed;
+
+        if (Map.isWall(Map.coordToTile(x) - 1, Map.coordToTile(y)) && Map.coordInTile(x) < WIDTH / 2){
+            x = Map.coordToTile(x) * Map.getTILE_SIZE() + WIDTH / 2;
+        } else if (Map.isWall(Map.coordToTile(x) + 1, Map.coordToTile(y)) && Map.coordInTile(x) > Map.getTILE_SIZE() - WIDTH / 2){
+            x = (Map.coordToTile(x) + 1) * Map.getTILE_SIZE() - WIDTH / 2;
+        } else if (Map.isWall(Map.coordToTile(x), Map.coordToTile(y) - 1) && Map.coordInTile(y) < WIDTH / 2){
+            y = (Map.coordToTile(y)) * Map.getTILE_SIZE() + WIDTH / 2;
+        } else if (Map.isWall(Map.coordToTile(x), Map.coordToTile(y) + 1) && Map.coordInTile(y) > Map.getTILE_SIZE() - WIDTH / 2){
+            y = (Map.coordToTile(y) + 1) * Map.getTILE_SIZE() - WIDTH / 2;
+        }
 
         if (targetReached()){
             chooseTargetTile();

@@ -5,6 +5,7 @@ public class KeyInputData {
     private static int rotation = 0;
     private static boolean shooting = false;
     private static boolean debugging = false;
+    private static boolean restart = false;
 
     private static long startedTurning = System.currentTimeMillis();
 
@@ -56,6 +57,14 @@ public class KeyInputData {
 
     public static synchronized long getStartedTurning() {
         return startedTurning;
+    }
+
+    public static synchronized boolean isRestart() {
+        return restart;
+    }
+
+    public static synchronized void setRestart(boolean restart) {
+        KeyInputData.restart = restart;
     }
 }
 

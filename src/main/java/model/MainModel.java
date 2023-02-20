@@ -42,6 +42,11 @@ public class MainModel {
     }
 
     public void update(){
+        if (KeyInputData.isRestart()){
+            restart();
+            KeyInputData.setRestart(false);
+        }
+
         if (levelFinished){
             currentLevel++;
             loadNextLevel();
@@ -170,5 +175,10 @@ public class MainModel {
     private void loadNextLevel(){
         MapLoader.load(mapPaths[currentLevel], this);
         levelFinished = false;
+    }
+
+    private void restart(){
+        MapLoader.load(mapPaths[0], this);
+        currentLevel = 0;
     }
 }

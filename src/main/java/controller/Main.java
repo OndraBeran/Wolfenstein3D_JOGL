@@ -22,7 +22,7 @@ public class Main {
             model.writingToFirst.set(!model.writingToFirst.get());
         });
 
-        model = new MainModel(SCREEN_WIDTH, FOV, new String[]{"/maps/map_new_1_enemy.png", "/maps/map_new.png", "/maps/map_new.png"}, barrier);
+        model = new MainModel(SCREEN_WIDTH, FOV, new String[]{"/maps/map_new.png", "/maps/map_new.png", "/maps/map_new.png"}, barrier);
         renderer = new Renderer();
     }
 
