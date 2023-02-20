@@ -41,11 +41,11 @@ public class Soldier {
     public Soldier(double x, double y) {
         this.x = x;
         this.y = y;
-
-        chooseTargetTile();
     }
 
     public void update(Point playerDirVect, double playerX, double playerY){
+        if(targetTile == null) chooseTargetTile();
+
         if (dead) return;
 
         int animationSpeed = dying ? DYING_ANIMATION : IDLE_ANIMATION;
@@ -220,6 +220,10 @@ public class Soldier {
 
     public int getCurrentSpriteStage() {
         return currentSpriteStage;
+    }
+
+    public double getDistToPlayer(){
+        return Point.distance(getCoordinates(), player.getCoordinates());
     }
 
     public void setPlayer(Player player) {

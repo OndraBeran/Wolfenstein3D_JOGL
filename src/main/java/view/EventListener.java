@@ -41,6 +41,10 @@ public class EventListener implements GLEventListener {
 
     private double deadScreenOpacity = 0;
 
+    private boolean transitionOngoing = false;
+    private double endLevelOpacity = 0;
+    private double newLevelOpacity = 1;
+
     public EventListener(int SCREEN_WIDTH, MainModel model, int[] keyEvents, CyclicBarrier barrier) {
         this.SCREEN_WIDTH = SCREEN_WIDTH;
         this.model = model;
@@ -152,6 +156,24 @@ public class EventListener implements GLEventListener {
             Graphics.fillScreen(gl, 1, 0, 0, deadScreenOpacity);
             if (deadScreenOpacity < 1){
                 deadScreenOpacity += 0.05;
+            }
+        }
+
+        if (data.state().levelFinished()){
+            transitionOngoing = true;
+        }
+
+        if (transitionOngoing){
+            if (endLevelOpacity <= 1){
+                Graphics.fillScreen(gl, 0, 0, 0, endLevelOpacity);
+                endLevelOpacity += 0.05;
+            } else {
+                Graphics.fillScreen(gl, 0, 0, 0, newLevelOpacity);
+                newLevelOpacity -= 0.05;
+
+                if (newLevelOpacity <= 0){
+                    transitionOngoing = false;
+                }
             }
         }
 
