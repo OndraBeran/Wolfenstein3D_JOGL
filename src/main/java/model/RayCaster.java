@@ -30,9 +30,9 @@ public class RayCaster {
         double angleToPlayer = Math.abs(player.getAngle() - angle);
 
         if (xDist < yDist){
-            return new RayData(removeFisheye(xDist, angleToPlayer), true, Map.coordInTile(xIntersect.getX()));
+            return new RayData(removeFisheye(xDist, angleToPlayer), true, Map.coordInTile(xIntersect.getX()), Map.getTextureIndex(xIntersect));
         } else {
-          return new RayData(removeFisheye(yDist, angleToPlayer), false, Map.coordInTile(yIntersect.getY()));
+          return new RayData(removeFisheye(yDist, angleToPlayer), false, Map.coordInTile(yIntersect.getY()), Map.getTextureIndex(yIntersect));
         }
     }
 
@@ -116,7 +116,7 @@ public class RayCaster {
 
             //check for walls
             if (Map.isWall(temp)){
-                return nextIntersectX;
+                return temp;
             } else {
                 double newX = nextIntersectX.getX() + deltaX;
                 double newY = nextIntersectX.getY() + deltaY;
@@ -147,7 +147,7 @@ public class RayCaster {
             temp = new Point(tempX, nextIntersect.getY());
 
             if (Map.isWall(temp)){
-                return nextIntersect;
+                return temp;
             } else {
                 double newX = nextIntersect.getX() + deltaX;
                 double newY = nextIntersect.getY() + deltaY;

@@ -202,11 +202,11 @@ public class Graphics {
 
         gl.glColor3d(0, 0.25, 1);
 
-        boolean[][] walls = Map.getWalls();
+        int[][] walls = Map.getWalls();
 
         for (int i = 0; i < walls.length; i++) {
             for (int j = 0; j < walls[i].length; j++) {
-                if (walls[i][j]){
+                if (walls[i][j] != 0){
                     drawMinimapTile(gl, j, i);
                 }
             }

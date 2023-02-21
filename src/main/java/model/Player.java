@@ -13,7 +13,7 @@ public class Player {
 
     private int HP = 100;
     private boolean dead = false;
-    private boolean invincible = false;
+    private boolean invincible = true;
 
     private final double velocity = 16;
     private final double angleVelocity = 2;

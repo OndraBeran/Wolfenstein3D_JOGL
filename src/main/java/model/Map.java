@@ -3,10 +3,12 @@ package model;
 import java.util.Arrays;
 
 public class Map {
+    static int temCounter = 0;
+
     private static final int NUMBER_OF_TILES = 64;
     private static final int TILE_SIZE = 128;
 
-    private static boolean[][] walls;
+    private static int[][] walls;
 
     public static int getNUMBER_OF_TILES() {
         return NUMBER_OF_TILES;
@@ -16,7 +18,7 @@ public class Map {
         return TILE_SIZE;
     }
 
-    public static boolean[][] getWalls() {
+    public static int[][] getWalls() {
         return walls;
     }
 
@@ -30,15 +32,15 @@ public class Map {
         int xIndex = coordToTile(point.getX());
         int yIndex = coordToTile(point.getY());
 
-        return walls[yIndex][xIndex];
+        return walls[yIndex][xIndex] != 0;
     }
 
     public static boolean isWall(double x, double y){
-        return walls[coordToTile(y)] [coordToTile(x)];
+        return walls[coordToTile(y)] [coordToTile(x)] != 0;
     }
 
     public static boolean isWall(int x, int y){
-        return walls[y][x];
+        return walls[y][x] != 0;
     }
     
     public static int coordToTile(double coord){
@@ -53,7 +55,20 @@ public class Map {
         return new Point(x * TILE_SIZE + (TILE_SIZE / 2), y * TILE_SIZE + (TILE_SIZE / 2));
     }
 
-    public static void setWalls(boolean[][] walls) {
+    public static void setWalls(int[][] walls) {
         Map.walls = walls;
+    }
+
+    public static int getTextureIndex(Point point){
+        int xIndex = coordToTile(point.getX());
+        int yIndex = coordToTile(point.getY());
+
+        if (walls[yIndex][xIndex] - 1 < 0 && temCounter == 0){
+            System.out.println(xIndex + " " + yIndex);
+            System.out.println(point);
+            temCounter++;
+        }
+
+        return walls[yIndex][xIndex] - 1;
     }
 }

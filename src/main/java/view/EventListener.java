@@ -30,7 +30,7 @@ public class EventListener implements GLEventListener {
     TextRenderer textRenderer;
 
     private ImageResource introImg;
-    private ImageResource[] textures;
+    private ImageResource[][] textures;
     private ImageResource[][] enemySprites;
     private ImageResource[] gunSprites;
 
@@ -119,15 +119,14 @@ public class EventListener implements GLEventListener {
 
                     ImageResource img;
 
-                    if (!KeyInputData.isSwastikaMode()){
-                        img = data.rays()[j].intersectsXAxis() ? textures[0] : textures[1];
-                    } else {
-                        img = data.rays()[j].intersectsXAxis() ? textures[2] : textures[3];
-                    }
+                    int texMaterialIndex = data.rays()[j].textureIndex();
+                    int texBrightnessIndex = data.rays()[j].intersectsXAxis() ? 0 : 1;
+
+                    img = textures[texMaterialIndex][texBrightnessIndex];
 
                     boolean bright = data.rays()[j].intersectsXAxis();
 
-                    Graphics.drawTexturedRay(gl, img, SCREEN_WIDTH - 1 - j, scale, data.rays()[j].intersectCordInTile(), bright);
+                    Graphics.drawTexturedRay(gl, img, SCREEN_WIDTH - 1 - j, scale, data.rays()[j].intersectCordInTile(), false);
                 }
             }
 
@@ -227,12 +226,25 @@ public class EventListener implements GLEventListener {
 
     private void loadTextures(CountDownLatch latch){
         Thread loadTexture = new Thread(() -> {
-            textures = new ImageResource[4];
+            textures = new ImageResource[6][2];
 
-            textures[0] = new ImageResource("/textures/BSTONEA1.png");
-            textures[1] = new ImageResource("/textures/BSTONEA2.png");
-            textures[2] = new ImageResource("/textures/GSTHTLR1.png");
-            textures[3] = new ImageResource("/textures/GSTHTLR2.png");
+            textures[0][0] = new ImageResource("/textures/BSTONEA1.png");
+            textures[0][1] = new ImageResource("/textures/BSTONEA2.png");
+
+            textures[1][0] = new ImageResource("/textures/BSTCELB1.png");
+            textures[1][1] = new ImageResource("/textures/BSTCELB2.png");
+
+            textures[2][0] = new ImageResource("/textures/GSTONEA1.png");
+            textures[2][1] = new ImageResource("/textures/GSTONEA2.png");
+
+            textures[3][0] = new ImageResource("/textures/GSTLSLM1.png");
+            textures[3][1] = new ImageResource("/textures/GSTLSLM2.png");
+
+            textures[4][0] = new ImageResource("/textures/WOOD1.png");
+            textures[4][1] = new ImageResource("/textures/WOOD2.png");
+
+            textures[5][0] = new ImageResource("/textures/DOOR2_1.png");
+            textures[5][1] = new ImageResource("/textures/DOOR2_2.png");
 
             latch.countDown();
         }, "loadTexture");
