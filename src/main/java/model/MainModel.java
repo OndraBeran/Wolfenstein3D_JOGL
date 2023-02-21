@@ -3,6 +3,7 @@ package model;
 import model.renderdata.*;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeMap;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -18,6 +19,7 @@ public class MainModel {
 
     //TODO change to private
     public ArrayList<Soldier> enemies;
+    private List<SpriteObject> spriteObjects;
 
     protected CyclicBarrier barrier;
 
@@ -76,7 +78,7 @@ public class MainModel {
         * get player data
         */
         RayData[] rays = castRays();
-        EnemyData[] enemies = prepareEnemyData();
+        SpriteData[] enemies = prepareEnemyData();
         PlayerData player = preparePlayerData();
         GameStateData state = new GameStateData(levelFinished, nextLevelLoaded);
 
@@ -87,8 +89,8 @@ public class MainModel {
         }
     }
 
-    private EnemyData[] prepareEnemyData(){
-        EnemyData[] result = new EnemyData[enemies.size()];
+    private SpriteData[] prepareEnemyData(){
+        SpriteData[] result = new SpriteData[enemies.size()];
 
         TreeMap<Double, Soldier> enemyDist = new TreeMap<>();
 
@@ -111,7 +113,7 @@ public class MainModel {
         return new PlayerData(player.getGun().getCurrentSprite(), player.getHP(), player.isDead());
     }
 
-    private EnemyData renderEnemy(Soldier soldier){
+    private SpriteData renderEnemy(Soldier soldier){
 
         double posInFOV;
 
@@ -137,7 +139,7 @@ public class MainModel {
             posInFOV = 0.5 - (angleDiff / FOV);
         }
 
-        return new EnemyData(player.distToEnemy(soldier), posInFOV, soldier.getCurrentSpriteStage(), soldier.getOrientatedSpriteIndex());
+        return new SpriteData(player.distToEnemy(soldier), posInFOV, soldier.getCurrentSpriteStage(), soldier.getOrientatedSpriteIndex());
     }
 
     private RayData[] castRays(){
@@ -166,6 +168,10 @@ public class MainModel {
 
     public void setPlayer(Player player) {
         this.player = player;
+    }
+
+    public void setSpriteObjects(List<SpriteObject> spriteObjects) {
+        this.spriteObjects = spriteObjects;
     }
 
     public void setFinishTile(int[] finishTile) {

@@ -2,7 +2,7 @@ package model;
 
 import java.util.Random;
 
-public class Soldier {
+public class Soldier{
     private final double IDLE_SPEED = 12;
     private final int IDLE_ANIMATION = 150;
 
