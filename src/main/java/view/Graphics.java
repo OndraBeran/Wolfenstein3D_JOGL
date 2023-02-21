@@ -30,7 +30,7 @@ public class Graphics {
 
     public static void drawBackground(GL2 gl, double x1, double x2){
         //draw ceiling
-        gl.glColor3f(0.5f, 0.5f, 0.5f);
+        gl.glColor3f(0.3f, 0.3f, 0.3f);
         gl.glBegin(GL2.GL_QUADS);
 
         gl.glVertex2d(x1, 1);
@@ -41,7 +41,7 @@ public class Graphics {
         gl.glEnd();
 
         //draw floor
-        gl.glColor3f(0.3f, 0.3f, 0.3f);
+        gl.glColor3f(0.4f, 0.4f, 0.4f);
         gl.glBegin(GL2.GL_QUADS);
 
         gl.glVertex2d(x1, 0);

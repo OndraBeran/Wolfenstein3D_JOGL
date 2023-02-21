@@ -2,9 +2,7 @@ package model;
 
 import model.renderdata.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -90,22 +88,26 @@ public class MainModel {
     }
 
     private SpriteData[] prepareEnemyData(){
-        SpriteData[] result = new SpriteData[enemies.size()];
-
-        TreeMap<Double, Soldier> enemyDist = new TreeMap<>();
-
-        for (Soldier soldier :
-                enemies) {
-            enemyDist.put(soldier.getDistToPlayer(), soldier);
-        }
+        SpriteData[] result = new SpriteData[enemies.size() + spriteObjects.size()];
 
         int counter = 0;
-        for (Double key :
-                enemyDist.descendingKeySet()) {
-            result[counter] = renderEnemy(enemyDist.get(key));
+        for (Soldier soldier :
+                enemies) {
+            result[counter] = renderSprite(soldier.getCoordinates(), soldier.getOrientatedSpriteIndex(), soldier.getCurrentSpriteStage());
             counter++;
         }
-        
+
+        for (SpriteObject sprite :
+                spriteObjects) {
+            result[counter] = renderSprite(sprite.getPosition(), sprite.getIndex(), sprite.getStage());
+            counter++;
+        }
+
+        Arrays.sort(result, (o1, o2) -> {
+            if (o1.distance() == o2.distance()) return 0;
+            return o1.distance() > o2.distance() ? -1 : 1;
+        });
+
         return result;
     }
 
@@ -113,33 +115,31 @@ public class MainModel {
         return new PlayerData(player.getGun().getCurrentSprite(), player.getHP(), player.isDead());
     }
 
-    private SpriteData renderEnemy(Soldier soldier){
+    private SpriteData renderSprite(Point pos, int spriteIndex, int spriteStageIndex){
 
         double posInFOV;
 
-        Point enemyVector = new Point(soldier.getX() - player.getxCoor(), -(soldier.getY() - player.getyCoor()));
+        Point vectorFromPlayer = new Point(pos.getX() - player.getxCoor(), -(pos.getY() - player.getyCoor()));
 
-        double enemyVectAngle = Point.angleToXAxis(enemyVector);
+        double vectorFromPlayerAngle = Point.angleToXAxis(vectorFromPlayer);
 
-        double angleDiff = enemyVectAngle - player.getAngle();
+        double angleDiff = vectorFromPlayerAngle - player.getAngle();
 
         if(player.getAngle() >= 0 && player.getAngle() < 90
-            && enemyVectAngle >= 270 && enemyVectAngle < 360){
+            && vectorFromPlayerAngle >= 270 && vectorFromPlayerAngle < 360){
             angleDiff -= 360;
         }
 
         if (player.getAngle() >= 270 && player.getAngle() < 360
-            && enemyVectAngle >= 0 && enemyVectAngle < 90){
+            && vectorFromPlayerAngle >= 0 && vectorFromPlayerAngle < 90){
             angleDiff += 360;
         }
 
-        if (angleDiff > 0){
-            posInFOV = 0.5 - angleDiff / FOV;
-        } else {
-            posInFOV = 0.5 - (angleDiff / FOV);
-        }
+        posInFOV = 0.5 - angleDiff / FOV;
 
-        return new SpriteData(player.distToEnemy(soldier), posInFOV, soldier.getCurrentSpriteStage(), soldier.getOrientatedSpriteIndex());
+        double distToPlayer = Point.distance(player.getCoordinates(), pos);
+
+        return new SpriteData(distToPlayer, posInFOV, spriteStageIndex, spriteIndex);
     }
 
     private RayData[] castRays(){

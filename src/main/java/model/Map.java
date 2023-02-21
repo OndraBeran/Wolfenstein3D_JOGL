@@ -32,17 +32,56 @@ public class Map {
         int xIndex = coordToTile(point.getX());
         int yIndex = coordToTile(point.getY());
 
-        return walls[yIndex][xIndex] != 0;
+        int tile = walls[yIndex][xIndex];
+
+        if (tile == 0 || tile == -1){
+            return false;
+        }
+
+        return true;
     }
 
     public static boolean isWall(double x, double y){
-        return walls[coordToTile(y)] [coordToTile(x)] != 0;
+        int tile = walls[coordToTile(y)] [coordToTile(x)];
+
+        if (tile == 0 || tile == -1){
+            return false;
+        }
+
+        return true;
     }
 
     public static boolean isWall(int x, int y){
-        return walls[y][x] != 0;
+        int tile = walls[y][x];
+
+        if (tile == 0 || tile == -1){
+            return false;
+        }
+
+        return true;
     }
-    
+
+    public static boolean isWalkable(Point point){
+        int xIndex = coordToTile(point.getX());
+        int yIndex = coordToTile(point.getY());
+
+        int tile = walls[yIndex][xIndex];
+
+        return tile == 0;
+    }
+
+    public static boolean isWalkable(double x, double y){
+        int tile = walls[coordToTile(y)] [coordToTile(x)];
+
+        return tile == 0;
+    }
+
+    public static boolean isWalkable(int x, int y){
+        int tile = walls[y][x];
+
+        return tile == 0;
+    }
+
     public static int coordToTile(double coord){
         return (int) coord / TILE_SIZE;
     }

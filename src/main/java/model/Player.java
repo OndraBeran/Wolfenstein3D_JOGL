@@ -66,7 +66,7 @@ public class Player {
         double newY = yCoor - KeyInputData.getMovement() * (Math.sin(Math.toRadians(angle)) * velocity * increment);
         double newX = xCoor + KeyInputData.getMovement() * (Math.cos(Math.toRadians(angle)) * velocity * increment);
 
-        if (!Map.isWall(newX, newY)){
+        if (Map.isWalkable(newX, newY)){
             if (Map.isWall(Map.coordToTile(newX) - 1, Map.coordToTile(newY)) && Map.coordInTile(newX) < MIN_DIST_TO_WALL){
                 newX = Map.coordToTile(newX) * Map.getTILE_SIZE() + MIN_DIST_TO_WALL;
             } else if (Map.isWall(Map.coordToTile(newX) + 1, Map.coordToTile(newY)) && Map.coordInTile(newX) > Map.getTILE_SIZE() - MIN_DIST_TO_WALL){

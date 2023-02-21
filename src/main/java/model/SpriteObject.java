@@ -1,9 +1,10 @@
 package model;
 
 public class SpriteObject {
-    protected double x;
-    protected double y;
-    protected int index;
+    private final double x;
+    private final double y;
+    private final int index;
+    private final int stage = 0;
 
     public SpriteObject(double x, double y, int index) {
         this.x = x;
@@ -21,5 +22,13 @@ public class SpriteObject {
 
     public int getIndex() {
         return index;
+    }
+
+    public int getStage() {
+        return stage;
+    }
+
+    public Point getPosition(){
+        return new Point(x, y);
     }
 }

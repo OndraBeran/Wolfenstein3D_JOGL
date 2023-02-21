@@ -27,7 +27,7 @@ public class MapLoader {
     private static final int ARMOR = -32768;
     private static final int BARREL = -8355840;
     private static final int LAMP = -8388480;
-    private static final int TABLE = -16744320;
+    private static final int TABLE = -4194112;
     private static final int WELL = -8323200;
 
     public static void load(String path, MainModel model){
@@ -53,7 +53,11 @@ public class MapLoader {
                         case SOLDIER_CODE -> enemyList.add(new Soldier((x + 0.5) * Map.getTILE_SIZE(), (y + 0.5) * Map.getTILE_SIZE()));
                         case END_CODE -> model.setFinishTile(new int[]{x, y});
 
-                        case ARMOR, BARREL, LAMP, TABLE, WELL -> spriteObjects.add(createSpriteObject(x, y, rgbValue));
+                        case LAMP -> spriteObjects.add(createSpriteObject(x, y, rgbValue));
+                        case ARMOR, BARREL, TABLE, WELL -> {
+                            spriteObjects.add(createSpriteObject(x, y, rgbValue));
+                            map[y][x] = -1;
+                        }
                     }
                 }
             }
@@ -102,7 +106,7 @@ public class MapLoader {
             case TABLE: yield 3;
             case WELL: yield 4;
             default: yield -1;
-        };
+        } + 10;
 
         return new SpriteObject(xCoor, yCoor, spriteIndex);
     }

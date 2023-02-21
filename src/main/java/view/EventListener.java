@@ -31,7 +31,7 @@ public class EventListener implements GLEventListener {
 
     private ImageResource introImg;
     private ImageResource[][] textures;
-    private ImageResource[][] enemySprites;
+    private ImageResource[][] objectSprites;
     private ImageResource[] gunSprites;
 
     private boolean gameStarted = false;
@@ -126,14 +126,14 @@ public class EventListener implements GLEventListener {
 
                     boolean bright = data.rays()[j].intersectsXAxis();
 
-                    Graphics.drawTexturedRay(gl, img, SCREEN_WIDTH - 1 - j, scale, data.rays()[j].intersectCordInTile(), false);
+                    Graphics.drawTexturedRay(gl, img, SCREEN_WIDTH - 1 - j, scale, data.rays()[j].intersectCordInTile(), true);
                 }
             }
 
             if (i != data.enemies().length){
                 double scale = scaleRay(data.enemies()[i].distance());
 
-                Graphics.drawSprite(gl, enemySprites[data.enemies()[i].spriteOrientation()][data.enemies()[i].movementStage()], data.enemies()[i].posInFOV() * SCREEN_WIDTH, scale * SCREEN_HEIGHT, scale);
+                Graphics.drawSprite(gl, objectSprites[data.enemies()[i].orientatedSpriteIndex()][data.enemies()[i].spriteStage()], data.enemies()[i].posInFOV() * SCREEN_WIDTH, scale * SCREEN_HEIGHT, scale);
             }
         }
 
@@ -204,7 +204,7 @@ public class EventListener implements GLEventListener {
 
         loadIntroImg(latch);
         loadTextures(latch);
-        loadEnemies(latch);
+        loadSprites(latch);
         loadGuns(latch);
 
         try {
@@ -252,36 +252,42 @@ public class EventListener implements GLEventListener {
         loadTexture.start();
     }
 
-    private void loadEnemies(CountDownLatch latch){
+    private void loadSprites(CountDownLatch latch){
         Thread loadEnemies = new Thread(() -> {
-            enemySprites = new ImageResource[10][];
+            objectSprites = new ImageResource[15][];
 
-            for (int i = 0; i < enemySprites.length - 2; i++) {
-                enemySprites[i] = new ImageResource[5];
+            for (int i = 0; i < objectSprites.length - 7; i++) {
+                objectSprites[i] = new ImageResource[5];
 
-                enemySprites[i][0] = new ImageResource("/gard/GARDA" + (i + 1) + ".png");
-                enemySprites[i][1] = new ImageResource("/gard/GARDB" + (i + 1) + ".png");
-                enemySprites[i][2] = new ImageResource("/gard/GARDC" + (i + 1) + ".png");
-                enemySprites[i][3] = new ImageResource("/gard/GARDD" + (i + 1) + ".png");
-                enemySprites[i][4] = new ImageResource("/gard/GARDE" + (i + 1) + ".png");
+                objectSprites[i][0] = new ImageResource("/gard/GARDA" + (i + 1) + ".png");
+                objectSprites[i][1] = new ImageResource("/gard/GARDB" + (i + 1) + ".png");
+                objectSprites[i][2] = new ImageResource("/gard/GARDC" + (i + 1) + ".png");
+                objectSprites[i][3] = new ImageResource("/gard/GARDD" + (i + 1) + ".png");
+                objectSprites[i][4] = new ImageResource("/gard/GARDE" + (i + 1) + ".png");
             }
 
-            enemySprites[8] = new ImageResource[3];
+            objectSprites[8] = new ImageResource[3];
 
-            enemySprites[8][0] = new ImageResource("/gard/GARDF0.png");
-            enemySprites[8][1] = new ImageResource("/gard/GARDG0.png");
-            enemySprites[8][2] = new ImageResource("/gard/GARDH0.png");
+            objectSprites[8][0] = new ImageResource("/gard/GARDF0.png");
+            objectSprites[8][1] = new ImageResource("/gard/GARDG0.png");
+            objectSprites[8][2] = new ImageResource("/gard/GARDH0.png");
 
-            enemySprites[9] = new ImageResource[5];
+            objectSprites[9] = new ImageResource[5];
 
-            enemySprites[9][0] = new ImageResource("/gard/GARDI0.png");
-            enemySprites[9][1] = new ImageResource("/gard/GARDK0.png");
-            enemySprites[9][2] = new ImageResource("/gard/GARDL0.png");
-            enemySprites[9][3] = new ImageResource("/gard/GARDM0.png");
-            enemySprites[9][4] = new ImageResource("/gard/GARDN0.png");
+            objectSprites[9][0] = new ImageResource("/gard/GARDI0.png");
+            objectSprites[9][1] = new ImageResource("/gard/GARDK0.png");
+            objectSprites[9][2] = new ImageResource("/gard/GARDL0.png");
+            objectSprites[9][3] = new ImageResource("/gard/GARDM0.png");
+            objectSprites[9][4] = new ImageResource("/gard/GARDN0.png");
+
+            objectSprites[10] = new ImageResource[]{new ImageResource("/object_sprites/ARMRA0.png")};
+            objectSprites[11] = new ImageResource[]{new ImageResource("/object_sprites/BARLA0.png")};
+            objectSprites[12] = new ImageResource[]{new ImageResource("/object_sprites/GLMPA0.png")};
+            objectSprites[13] = new ImageResource[]{new ImageResource("/object_sprites/TCHRA0.png")};
+            objectSprites[14] = new ImageResource[]{new ImageResource("/object_sprites/WEL1A0.png")};
 
             latch.countDown();
-        }, "loadEnemy");
+        }, "loadSprites");
 
         loadEnemies.start();
     }

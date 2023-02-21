@@ -24,6 +24,7 @@ public class Renderer {
         window = GLWindow.create(caps);
         window.setTitle("Wolfenstein 3D");
         window.setSize((int)(640 * 2), (int)(360 * 2));
+        window.setPointerVisible(false);
         window.setFullscreen(true);
 
 

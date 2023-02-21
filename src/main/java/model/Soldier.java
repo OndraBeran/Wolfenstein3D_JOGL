@@ -90,7 +90,7 @@ public class Soldier{
             double newX = x + dirVects[i].getX();
             double newY = y + dirVects[i].getY();
 
-            if (!Map.isWall(newX, newY)){
+            if (Map.isWalkable(newX, newY)){
                 double dist = Point.distance(x + dirVects[i].getX(), y + dirVects[i].getY(), target.getX(), target.getY());
 
                 if (dist < minDist) {
@@ -260,7 +260,7 @@ public class Soldier{
 
         for (int i = currentX - 1; i <= currentX + 1; i++) {
             for (int j = currentY - 1; j <= currentY + 1; j++){
-                if (!(i == currentX && j == currentY) && !Map.isWall(i, j)){
+                if (!(i == currentX && j == currentY) && Map.isWalkable(i, j)){
                     possibleTiles[counter] = new int[]{i, j};
 
                     double distToPlayer2 = Math.pow(i - Map.coordToTile(player.getxCoor()), 2) + Math.pow(j - Map.coordToTile(player.getyCoor()), 2);
@@ -289,7 +289,7 @@ public class Soldier{
             int x = currentX + r.nextInt(3) - 1;
             int y = currentY + r.nextInt(3) - 1;
 
-            if (!(x == currentX && y == currentY) && !Map.isWall(x, y)){
+            if (!(x == currentX && y == currentY) && Map.isWalkable(x, y)){
                 tile = new int[]{x, y};
             }
 
