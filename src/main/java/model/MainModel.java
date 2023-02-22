@@ -195,6 +195,9 @@ public class MainModel {
     }
 
     private void loadNextLevel(){
+        if (currentLevel > mapPaths.length - 1){
+            currentLevel = 0;
+        }
         MapLoader.load(mapPaths[currentLevel], this);
         levelFinished = false;
     }
