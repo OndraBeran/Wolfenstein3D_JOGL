@@ -66,10 +66,20 @@ public class Point {
         return Math.toDegrees(Math.acos(angleCos));
     }
 
+    public static Point[] perpendicularVectors(Point baseVector){
+        return new Point[]{new Point(-baseVector.getY(), baseVector.getX()), new Point(baseVector.getY(), -baseVector.getX())};
+    }
+
     public static Point normalizeVector(Point vec){
         double magnitude = vec.vectorMagnitude();
 
         return new Point(vec.getX() / magnitude, vec.getY() / magnitude);
+    }
+
+    public static Point changeMagnitude(Point vector, double targetMagnitude){
+        Point normalized = normalizeVector(vector);
+
+        return new Point(normalized.getX() * targetMagnitude, normalized.getY() * targetMagnitude);
     }
 
     public static Point pointsToVector(Point a, Point b){
@@ -86,6 +96,10 @@ public class Point {
         angle = Math.toRadians(angle);
 
         return new Point(Math.cos(angle), Math.sin(angle));
+    }
+
+    public static Point moveByVector(Point base, Point vector){
+        return new Point(base.getX() + vector.getX(), base.getY() + vector.getY());
     }
 
     @Override

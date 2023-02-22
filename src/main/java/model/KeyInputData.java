@@ -5,12 +5,10 @@ public class KeyInputData {
     private static int rotation = 0;
     private static boolean shooting = false;
     private static boolean debugging = false;
+    private static boolean drawWalls = true;
     private static boolean restart = false;
 
     private static long startedTurning = System.currentTimeMillis();
-
-    //TODO remove
-    private static boolean swastikaMode = false;
 
     public static synchronized int getMovement() {
         return movement;
@@ -47,14 +45,6 @@ public class KeyInputData {
         KeyInputData.debugging = debugging;
     }
 
-    public static synchronized boolean isSwastikaMode() {
-        return swastikaMode;
-    }
-
-    public static synchronized void setSwastikaMode(boolean swastikaMode) {
-        KeyInputData.swastikaMode = swastikaMode;
-    }
-
     public static synchronized long getStartedTurning() {
         return startedTurning;
     }
@@ -65,6 +55,14 @@ public class KeyInputData {
 
     public static synchronized void setRestart(boolean restart) {
         KeyInputData.restart = restart;
+    }
+
+    public static synchronized boolean isDrawWalls() {
+        return drawWalls;
+    }
+
+    public static synchronized void setDrawWalls(boolean drawWalls) {
+        KeyInputData.drawWalls = drawWalls;
     }
 }
 

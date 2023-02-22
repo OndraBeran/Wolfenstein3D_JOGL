@@ -126,7 +126,9 @@ public class EventListener implements GLEventListener {
 
                     boolean bright = data.rays()[j].intersectsXAxis();
 
-                    Graphics.drawTexturedRay(gl, img, SCREEN_WIDTH - 1 - j, scale, data.rays()[j].intersectCordInTile(), true);
+                    if (KeyInputData.isDrawWalls()){
+                        Graphics.drawTexturedRay(gl, img, SCREEN_WIDTH - 1 - j, scale, data.rays()[j].intersectCordInTile(), true);
+                    }
                 }
             }
 

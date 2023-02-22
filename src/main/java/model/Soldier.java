@@ -32,9 +32,10 @@ public class Soldier{
     private long lastShot = System.currentTimeMillis();
     private int shootingSpriteIndex = 0;
     private final int TIME_BETWEEN_SHOTS = 2000;
-    private final double MAX_DIST_TO_SHOOT = 1000;
+    private final double MAX_DIST_TO_SHOOT = 1500;
 
-    private boolean idle = false;
+    private boolean idle = true;
+    private long lastSeenPlayer = 0;
 
     private int hp = 100;
     private boolean dying = false;
@@ -46,6 +47,8 @@ public class Soldier{
     }
 
     public void update(Point playerDirVect, double playerX, double playerY){
+        updateState();
+
         if(targetTile == null) chooseTargetTile();
 
         if (dead) return;
@@ -90,7 +93,10 @@ public class Soldier{
             double newX = x + dirVects[i].getX();
             double newY = y + dirVects[i].getY();
 
-            if (Map.isWalkable(newX, newY)){
+            double midwayX = x + dirVects[i].getX() / 2;
+            double midwayY = y + dirVects[i].getY() / 2;
+
+            if (Map.isWalkable(newX, newY) && Map.isWalkable(midwayX, midwayY)){
                 double dist = Point.distance(x + dirVects[i].getX(), y + dirVects[i].getY(), target.getX(), target.getY());
 
                 if (dist < minDist) {
@@ -175,6 +181,29 @@ public class Soldier{
         }
     }
 
+    private void updateState(){
+        if (idle){
+            idle = !canSeePlayer();
+        } else {
+            if (!canSeePlayer() && System.currentTimeMillis() - lastSeenPlayer > 3000){
+                idle = true;
+            }
+        }
+
+        if (canSeePlayer()){
+            lastSeenPlayer = System.currentTimeMillis();
+        }
+    }
+
+    private boolean canSeePlayer(){
+        double distToPlayer = Point.distance(getCoordinates(), player.getCoordinates());
+
+        Point enemyPlayerVector = new Point(player.getxCoor() - x, -(player.getyCoor() - y));
+        double distToWall = RayCaster.castRay(getCoordinates(), Point.angleToXAxis(enemyPlayerVector));
+
+        return distToWall > distToPlayer;
+    }
+
     private void shoot(){
         shooting = true;
         lastShot = System.currentTimeMillis();
@@ -204,10 +233,7 @@ public class Soldier{
         double distToPlayer = Point.distance(getCoordinates(), player.getCoordinates());
         long timeSinceLastShot = System.currentTimeMillis() - lastShot;
 
-        Point enemyPlayerVector = new Point(player.getxCoor() - x, -(player.getyCoor() - y));
-        double distToWall = RayCaster.castRay(getCoordinates(), Point.angleToXAxis(enemyPlayerVector));
-
-        if (distToWall < distToPlayer)return false;
+        if (!canSeePlayer())return false;
         if (distToPlayer > MAX_DIST_TO_SHOOT)return false;
         if (timeSinceLastShot < TIME_BETWEEN_SHOTS) return false;
 

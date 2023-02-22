@@ -137,7 +137,23 @@ public class MainModel {
 
         posInFOV = 0.5 - angleDiff / FOV;
 
+        //asi nejhorších 20 rádků co jsem kdy napsal
+
+        Point[] perpendiculars = Point.perpendicularVectors(vectorFromPlayer);
+
+        perpendiculars[0] = Point.changeMagnitude(perpendiculars[0], 32);
+        perpendiculars[1] = Point.changeMagnitude(perpendiculars[1], 32);
+
+        Point edge1 = Point.moveByVector(pos, perpendiculars[0]);
+        Point edge2 = Point.moveByVector(pos, perpendiculars[1]);
+
+        //double distToPlayer = Double.min(Point.distance(edge1, player.getCoordinates()), Point.distance(edge2, player.getCoordinates()));
+
         double distToPlayer = Point.distance(player.getCoordinates(), pos);
+
+        distToPlayer *= Math.cos(Math.toRadians(angleDiff));
+
+        if (posInFOV < -0.5 || posInFOV > 1.5) distToPlayer = Double.MAX_VALUE;
 
         return new SpriteData(distToPlayer, posInFOV, spriteStageIndex, spriteIndex);
     }
