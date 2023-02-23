@@ -4,6 +4,7 @@ public class Gun {
 
     private int currentSprite = 0;
     private long lastUpdate = Long.MIN_VALUE / 2;
+    private boolean playSound = false;
 
     private boolean shooting = false;
     private final int TIME_BETWEEN_SHOTS = 700;
@@ -15,7 +16,6 @@ public class Gun {
         if (System.currentTimeMillis() - lastUpdate > 128 && shooting){
             if (currentSprite == 2){
                 currentSprite = 0;
-
                 shooting = false;
             } else {
                 currentSprite++;
@@ -43,6 +43,10 @@ public class Gun {
 
     public void setShooting(boolean shooting) {
         this.shooting = shooting;
+
+        if (shooting){
+            playSound = true;
+        }
     }
 
     public long getLastShot() {
@@ -59,5 +63,13 @@ public class Gun {
 
     public int getDamage() {
         return damage;
+    }
+
+    public boolean isPlaySound() {
+        return playSound;
+    }
+
+    public void setPlaySound(boolean playSound) {
+        this.playSound = playSound;
     }
 }

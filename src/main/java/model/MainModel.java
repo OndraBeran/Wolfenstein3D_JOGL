@@ -1,6 +1,7 @@
 package model;
 
 import model.renderdata.*;
+import model.sounddata.SoundData;
 
 import java.util.*;
 import java.util.concurrent.CyclicBarrier;
@@ -19,10 +20,13 @@ public class MainModel {
     public ArrayList<Soldier> enemies;
     private List<SpriteObject> spriteObjects;
 
-    protected CyclicBarrier barrier;
+    public CyclicBarrier barrier;
 
     public RenderData renderData1;
     public RenderData renderData2;
+
+    public SoundData soundData1;
+    public SoundData soundData2;
 
     private int[] finishTile = new int[2];
     private boolean levelFinished = false;
@@ -82,8 +86,35 @@ public class MainModel {
 
         if (writingToFirst.get()){
             renderData1 = new RenderData(rays, enemies, player, state);
+            soundData1 = new SoundData(this.player.getGun().isPlaySound(), false, false);
         } else {
             renderData2 = new RenderData(rays, enemies, player, state);
+            soundData2 = new SoundData(this.player.getGun().isPlaySound(), false, false);
+        }
+    }
+
+    public void prepareSoundData(){
+        boolean gunshot = false;
+        boolean shouting = false;
+
+        if (player.getGun().isPlaySound()){
+            gunshot = true;
+            player.getGun().setPlaySound(false);
+        }
+
+        for (Soldier soldier :
+                enemies) {
+            if (soldier.isPlayAchtung()) {
+                shouting = true;
+                soldier.setPlayAchtung(false);
+            }
+
+        }
+
+        if (writingToFirst.get()){
+            soundData1 = new SoundData(gunshot, shouting, false);
+        } else {
+            soundData2 = new SoundData(gunshot, shouting, false);
         }
     }
 

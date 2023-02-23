@@ -14,11 +14,11 @@ public class Main {
 
     private MainModel model;
     private Renderer renderer;
-    private CyclicBarrier barrier;
+    public CyclicBarrier barrier;
 
     public Main() {
         System.setProperty("newt.window.icons", "icon_48px.png icon_48px.png");
-        barrier = new CyclicBarrier(2, () -> {
+        barrier = new CyclicBarrier(3, () -> {
             model.writingToFirst.set(!model.writingToFirst.get());
         });
 

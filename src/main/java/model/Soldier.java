@@ -41,6 +41,9 @@ public class Soldier{
     private boolean dying = false;
     private boolean dead = false;
 
+    private boolean playAchtung = false;
+    private boolean playDying = false;
+
     public Soldier(double x, double y) {
         this.x = x;
         this.y = y;
@@ -182,8 +185,9 @@ public class Soldier{
     }
 
     private void updateState(){
-        if (idle){
-            idle = !canSeePlayer();
+        if (idle && canSeePlayer()){
+            idle = false;
+            playAchtung = true;
         } else {
             if (!canSeePlayer() && System.currentTimeMillis() - lastSeenPlayer > 3000){
                 idle = true;
@@ -266,6 +270,14 @@ public class Soldier{
 
     public void setPlayer(Player player) {
         this.player = player;
+    }
+
+    public boolean isPlayAchtung() {
+        return playAchtung;
+    }
+
+    public void setPlayAchtung(boolean playAchtung) {
+        this.playAchtung = playAchtung;
     }
 
     private void chooseTargetTile(){

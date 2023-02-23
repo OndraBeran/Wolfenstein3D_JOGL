@@ -44,8 +44,6 @@ public class MapLoader {
                 for (int x = 0; x < mapImg.getWidth(); x++) {
                     int rgbValue = mapImg.getRGB(x, y);
 
-                    if (y == 0 && x < 7) System.out.println(rgbValue);
-
                     map[y][x] = materialIndex(rgbValue);
 
                     switch (rgbValue){

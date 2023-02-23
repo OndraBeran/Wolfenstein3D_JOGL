@@ -329,6 +329,10 @@ public class EventListener implements GLEventListener {
     private void startGame(){
         ModelLoop.initLoop(model);
         ModelLoop.start();
+
+        AudioPlayer.init(model);
+        AudioPlayer.start();
+
         try {
             barrier.await();
         } catch (InterruptedException e) {

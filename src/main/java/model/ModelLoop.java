@@ -24,6 +24,7 @@ public class ModelLoop {
                model.update();
 
                model.prepareRenderData();
+               model.prepareSoundData();
                try {
                    barrier.await();
                } catch (InterruptedException e) {
@@ -31,7 +32,6 @@ public class ModelLoop {
                } catch (BrokenBarrierException e) {
                    e.printStackTrace();
                }
-               barrier.reset();
            }
         });
 
