@@ -70,21 +70,18 @@ public class AudioPlayer {
     private static void playSounds(SoundData data){
         if (data.gunshot()){
             new Thread(() -> {
-                System.out.println(1);
                 gunshot.play();
             }).start();
         }
 
         if (data.achtung()){
             new Thread(() -> {
-                System.out.println(1);
                 achtung.play();
             }).start();
         }
 
         if (data.dying()){
             new Thread(() -> {
-                System.out.println(1);
                 dying.play();
             }).start();
         }

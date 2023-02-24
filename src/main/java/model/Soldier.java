@@ -41,6 +41,7 @@ public class Soldier{
     private boolean dying = false;
     private boolean dead = false;
 
+    private boolean playShooting = false;
     private boolean playAchtung = false;
     private boolean playDying = false;
 
@@ -231,6 +232,8 @@ public class Soldier{
 
             damageToBeSubtracted = baseDamage;
         }
+
+        playShooting = true;
     }
 
     private boolean canShoot(){
@@ -272,12 +275,28 @@ public class Soldier{
         this.player = player;
     }
 
+    public boolean isPlayShooting() {
+        return playShooting;
+    }
+
+    public void setPlayShooting(boolean playShooting) {
+        this.playShooting = playShooting;
+    }
+
     public boolean isPlayAchtung() {
         return playAchtung;
     }
 
     public void setPlayAchtung(boolean playAchtung) {
         this.playAchtung = playAchtung;
+    }
+
+    public boolean isPlayDying() {
+        return playDying;
+    }
+
+    public void setPlayDying(boolean playDying) {
+        this.playDying = playDying;
     }
 
     private void chooseTargetTile(){
@@ -354,6 +373,8 @@ public class Soldier{
             dying = true;
             orientatedSpriteIndex = 9;
             currentSpriteStage = 0;
+
+            playDying = true;
         }
     }
 

@@ -96,6 +96,7 @@ public class MainModel {
     public void prepareSoundData(){
         boolean gunshot = false;
         boolean shouting = false;
+        boolean dying = false;
 
         if (player.getGun().isPlaySound()){
             gunshot = true;
@@ -109,12 +110,22 @@ public class MainModel {
                 soldier.setPlayAchtung(false);
             }
 
+            if (soldier.isPlayShooting()){
+                gunshot = true;
+                soldier.setPlayShooting(false);
+            }
+
+            if (soldier.isPlayDying()){
+                dying = true;
+                soldier.setPlayDying(false);
+            }
+
         }
 
         if (writingToFirst.get()){
-            soundData1 = new SoundData(gunshot, shouting, false);
+            soundData1 = new SoundData(gunshot, shouting, dying);
         } else {
-            soundData2 = new SoundData(gunshot, shouting, false);
+            soundData2 = new SoundData(gunshot, shouting, dying);
         }
     }
 
