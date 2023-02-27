@@ -18,17 +18,17 @@ public class Graphics {
 
     private static final int TEXT_MARGIN = 200;
 
-    public static void init(int width, int height){
+    public static void init(int width, int height) {
         WIDTH = width;
         HEIGHT = height;
     }
 
-    public static void clear(GL2 gl){
+    public static void clear(GL2 gl) {
         gl.glClearColor(0, 0, 0, 1);
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);
     }
 
-    public static void drawBackground(GL2 gl, double x1, double x2){
+    public static void drawBackground(GL2 gl, double x1, double x2) {
         //draw ceiling
         gl.glColor3f(0.3f, 0.3f, 0.3f);
         gl.glBegin(GL2.GL_QUADS);
@@ -52,7 +52,7 @@ public class Graphics {
         gl.glEnd();
     }
 
-    public static void drawRay(GL2 gl, float color, double x, double y){
+    public static void drawRay(GL2 gl, float color, double x, double y) {
         gl.glColor3f(color, 0, 0);
         gl.glBegin(GL2.GL_QUADS);
 
@@ -64,12 +64,12 @@ public class Graphics {
         gl.glEnd();
     }
 
-    public static void drawTexturedRay(GL2 gl, ImageResource img, double x, double y, double index, boolean bright){
+    public static void drawTexturedRay(GL2 gl, ImageResource img, double x, double y, double index, boolean bright) {
         Texture tex = img.getTexture();
 
         gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
 
-        if (tex != null){
+        if (tex != null) {
             gl.glBindTexture(GL2.GL_TEXTURE_2D, tex.getTextureObject());
         }
 
@@ -93,12 +93,12 @@ public class Graphics {
         gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
     }
 
-    public static void drawSprite(GL2 gl, ImageResource img, double x, double width, double height){
+    public static void drawSprite(GL2 gl, ImageResource img, double x, double width, double height) {
         Texture tex = img.getTexture();
 
         gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
 
-        if (tex != null){
+        if (tex != null) {
             gl.glBindTexture(GL2.GL_TEXTURE_2D, tex.getTextureObject());
         }
 
@@ -125,12 +125,12 @@ public class Graphics {
         gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
     }
 
-    public static void drawGun(GL2 gl, ImageResource img, double centerX, double size){
+    public static void drawGun(GL2 gl, ImageResource img, double centerX, double size) {
         Texture tex = img.getTexture();
 
         gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
 
-        if (tex != null){
+        if (tex != null) {
             gl.glBindTexture(GL2.GL_TEXTURE_2D, tex.getTextureObject());
         }
 
@@ -157,12 +157,12 @@ public class Graphics {
         gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
     }
 
-    public static void drawImage(GL2 gl, ImageResource img){
+    public static void drawImage(GL2 gl, ImageResource img) {
         Texture tex = img.getTexture();
 
         gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
 
-        if (tex != null){
+        if (tex != null) {
             gl.glBindTexture(GL2.GL_TEXTURE_2D, tex.getTextureObject());
         }
 
@@ -189,7 +189,7 @@ public class Graphics {
         gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
     }
 
-    public static void drawMinimap(GL2 gl, Player player, ArrayList<Soldier> enemies){
+    public static void drawMinimap(GL2 gl, Player player, ArrayList<Soldier> enemies) {
         gl.glColor3d(0.5, 0.5, 0.5);
         gl.glBegin(GL2.GL_QUADS);
 
@@ -206,7 +206,7 @@ public class Graphics {
 
         for (int i = 0; i < walls.length; i++) {
             for (int j = 0; j < walls[i].length; j++) {
-                if (walls[i][j] != 0){
+                if (walls[i][j] != 0) {
                     drawMinimapTile(gl, j, i);
                 }
             }
@@ -226,7 +226,7 @@ public class Graphics {
         }
     }
 
-    private static void drawMinimapTile(GL2 gl, int x, int y){
+    private static void drawMinimapTile(GL2 gl, int x, int y) {
         double tileSize = 1.0 / Map.getNUMBER_OF_TILES();
         gl.glBegin(GL2.GL_QUADS);
 
@@ -238,7 +238,7 @@ public class Graphics {
         gl.glEnd();
     }
 
-    public static void drawText(TextRenderer renderer, String text, TextPos position, float color){
+    public static void drawText(TextRenderer renderer, String text, TextPos position, float color) {
         renderer.beginRendering(WIDTH, HEIGHT);
 
         renderer.setColor(1, 1, 1, color);
@@ -247,17 +247,17 @@ public class Graphics {
 
         Rectangle2D rect = renderer.getBounds(text);
 
-        switch (position){
-            case LEFT -> renderer.draw(text, (int)textStartLeft(fontSize), TEXT_MARGIN / 3);
+        switch (position) {
+            case LEFT -> renderer.draw(text, (int) textStartLeft(fontSize), TEXT_MARGIN / 3);
             case CENTER_BOTTOM -> renderer.draw(text, (int) textStartCenterX(rect.getWidth()), TEXT_MARGIN / 2);
-            case RIGHT -> renderer.draw(text, (int)textStartRight(text, fontSize), TEXT_MARGIN / 3);
-            case MIDDLE -> renderer.draw(text, (int) textStartCenterX(rect.getWidth()), (int)textStartCenterY(rect.getHeight()));
+            case RIGHT -> renderer.draw(text, (int) textStartRight(text, fontSize), TEXT_MARGIN / 3);
+            case MIDDLE -> renderer.draw(text, (int) textStartCenterX(rect.getWidth()), (int) textStartCenterY(rect.getHeight()));
         }
 
         renderer.endRendering();
     }
 
-    public static void fillScreen(GL2 gl, double red, double green, double blue, double alpha){
+    public static void fillScreen(GL2 gl, double red, double green, double blue, double alpha) {
         gl.glColor4d(red, green, blue, alpha);
 
         gl.glBegin(GL2.GL_QUADS);
@@ -270,23 +270,23 @@ public class Graphics {
         gl.glEnd();
     }
 
-    private static double textStartCenterX(double width){
+    private static double textStartCenterX(double width) {
         return (WIDTH - width) / 2;
     }
 
-    private static double textStartCenterY(double height){
+    private static double textStartCenterY(double height) {
         return (HEIGHT - height) / 2;
     }
 
-    private static double textStartLeft(int fontSize){
+    private static double textStartLeft(int fontSize) {
         return TEXT_MARGIN;
     }
 
-    private static double textStartRight(String text, int fontSize){
+    private static double textStartRight(String text, int fontSize) {
         return WIDTH - (text.length() + TEXT_MARGIN);
     }
 
-    public enum TextPos{
-        LEFT, RIGHT, CENTER_BOTTOM, MIDDLE;
+    public enum TextPos {
+        LEFT, RIGHT, CENTER_BOTTOM, MIDDLE
     }
 }

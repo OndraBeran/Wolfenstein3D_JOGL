@@ -28,7 +28,7 @@ public class SpriteObject {
         return stage;
     }
 
-    public Point getPosition(){
+    public Point getPosition() {
         return new Point(x, y);
     }
 }

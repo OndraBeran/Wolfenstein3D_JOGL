@@ -10,11 +10,11 @@ public class Gun {
     private final int TIME_BETWEEN_SHOTS = 700;
     private long lastShot = 0;
 
-    private int damage = 50;
+    private final int damage = 50;
 
-    protected void update(){
-        if (System.currentTimeMillis() - lastUpdate > 128 && shooting){
-            if (currentSprite == 2){
+    protected void update() {
+        if (System.currentTimeMillis() - lastUpdate > 128 && shooting) {
+            if (currentSprite == 2) {
                 currentSprite = 0;
                 shooting = false;
             } else {
@@ -44,7 +44,7 @@ public class Gun {
     public void setShooting(boolean shooting) {
         this.shooting = shooting;
 
-        if (shooting){
+        if (shooting) {
             playSound = true;
         }
     }

@@ -6,9 +6,7 @@ import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Path;
 
 public class ImageResource {
 
@@ -24,13 +22,13 @@ public class ImageResource {
             e.printStackTrace();
         }
 
-        if (img != null){
+        if (img != null) {
             img.flush();
         }
     }
 
-    public Texture getTexture(){
-        if (texture == null){
+    public Texture getTexture() {
+        if (texture == null) {
             texture = AWTTextureIO.newTexture(Renderer.getProfile(), img, true);
         }
 

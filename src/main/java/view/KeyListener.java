@@ -3,20 +3,18 @@ package view;
 import com.jogamp.newt.event.KeyEvent;
 import model.KeyInputData;
 
-import java.util.Arrays;
-
 public class KeyListener implements com.jogamp.newt.event.KeyListener {
-    private static int[] keyEvents = new int[]{0, 0};
+    private static final int[] keyEvents = new int[]{0, 0};
     public static boolean firstKeyPressed = false;
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (!firstKeyPressed){
+        if (!firstKeyPressed) {
             firstKeyPressed = true;
             return;
         }
 
-        switch (e.getKeyCode()){
+        switch (e.getKeyCode()) {
             case KeyEvent.VK_LEFT:
                 KeyInputData.setRotation(1);
                 break;
@@ -32,12 +30,6 @@ public class KeyListener implements com.jogamp.newt.event.KeyListener {
             case KeyEvent.VK_SPACE:
                 KeyInputData.setShooting(true);
                 break;
-            case KeyEvent.VK_F3:
-                KeyInputData.setDebugging(!KeyInputData.isDebugging());
-                break;
-            case KeyEvent.VK_F9:
-                KeyInputData.setDrawWalls(!KeyInputData.isDrawWalls());
-                break;
             case KeyEvent.VK_R:
                 KeyInputData.setRestart(true);
                 break;
@@ -46,8 +38,8 @@ public class KeyListener implements com.jogamp.newt.event.KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if (!e.isAutoRepeat()){
-            switch (e.getKeyCode()){
+        if (!e.isAutoRepeat()) {
+            switch (e.getKeyCode()) {
                 case KeyEvent.VK_LEFT:
                 case KeyEvent.VK_RIGHT:
                     KeyInputData.setRotation(0);

@@ -23,7 +23,7 @@ public class KeyInputData {
     }
 
     public static synchronized void setRotation(int rotation) {
-        if (rotation != KeyInputData.rotation){
+        if (rotation != KeyInputData.rotation) {
             startedTurning = System.currentTimeMillis();
         }
         KeyInputData.rotation = rotation;

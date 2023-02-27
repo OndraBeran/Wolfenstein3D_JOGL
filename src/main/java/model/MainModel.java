@@ -3,21 +3,22 @@ package model;
 import model.renderdata.*;
 import model.sounddata.SoundData;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainModel {
-    //TODO change to private
-    public Player player;
+    private Player player;
 
     private final int RESOLUTION;
     private final double FOV;
 
     public AtomicBoolean writingToFirst = new AtomicBoolean(true);
 
-    //TODO change to private
-    public ArrayList<Soldier> enemies;
+
+    private List<Soldier> enemies;
     private List<SpriteObject> spriteObjects;
 
     public CyclicBarrier barrier;
@@ -30,10 +31,10 @@ public class MainModel {
 
     private int[] finishTile = new int[2];
     private boolean levelFinished = false;
-    private boolean nextLevelLoaded = false;
+    private final boolean nextLevelLoaded = false;
 
     private int currentLevel = 0;
-    private String[] mapPaths;
+    private final String[] mapPaths;
 
     public MainModel(int res, double fov, String[] mapPaths, CyclicBarrier barrier) {
         MapLoader.load(mapPaths[currentLevel], this);
@@ -45,46 +46,46 @@ public class MainModel {
         this.barrier = barrier;
     }
 
-    public void update(){
-        if (KeyInputData.isRestart()){
+    public void update() {
+        if (KeyInputData.isRestart()) {
             restart();
             KeyInputData.setRestart(false);
         }
 
-        if (levelFinished){
+        if (levelFinished) {
             currentLevel++;
             loadNextLevel();
             return;
-        };
+        }
 
         player.update();
 
         //check if player is in finish
-        if (isInFinish()){
+        if (isInFinish()) {
             levelFinished = true;
         }
 
         updateEnemies();
     }
 
-    private void updateEnemies(){
+    private void updateEnemies() {
         for (int i = 0; i < enemies.size(); i++) {
             enemies.get(i).update(player.getStandardDirVector(), player.getxCoor(), player.getyCoor());
         }
     }
 
-    public void prepareRenderData(){
+    public void prepareRenderData() {
         /*
-        * cast rays
-        * get enemy data
-        * get player data
-        */
+         * cast rays
+         * get enemy data
+         * get player data
+         */
         RayData[] rays = castRays();
         SpriteData[] enemies = prepareEnemyData();
         PlayerData player = preparePlayerData();
         GameStateData state = new GameStateData(levelFinished, nextLevelLoaded);
 
-        if (writingToFirst.get()){
+        if (writingToFirst.get()) {
             renderData1 = new RenderData(rays, enemies, player, state);
             soundData1 = new SoundData(this.player.getGun().isPlaySound(), false, false);
         } else {
@@ -93,12 +94,12 @@ public class MainModel {
         }
     }
 
-    public void prepareSoundData(){
+    public void prepareSoundData() {
         boolean gunshot = false;
         boolean shouting = false;
         boolean dying = false;
 
-        if (player.getGun().isPlaySound()){
+        if (player.getGun().isPlaySound()) {
             gunshot = true;
             player.getGun().setPlaySound(false);
         }
@@ -110,26 +111,26 @@ public class MainModel {
                 soldier.setPlayAchtung(false);
             }
 
-            if (soldier.isPlayShooting()){
+            if (soldier.isPlayShooting()) {
                 gunshot = true;
                 soldier.setPlayShooting(false);
             }
 
-            if (soldier.isPlayDying()){
+            if (soldier.isPlayDying()) {
                 dying = true;
                 soldier.setPlayDying(false);
             }
 
         }
 
-        if (writingToFirst.get()){
+        if (writingToFirst.get()) {
             soundData1 = new SoundData(gunshot, shouting, dying);
         } else {
             soundData2 = new SoundData(gunshot, shouting, dying);
         }
     }
 
-    private SpriteData[] prepareEnemyData(){
+    private SpriteData[] prepareEnemyData() {
         SpriteData[] result = new SpriteData[enemies.size() + spriteObjects.size()];
 
         int counter = 0;
@@ -153,43 +154,31 @@ public class MainModel {
         return result;
     }
 
-    private PlayerData preparePlayerData(){
+    private PlayerData preparePlayerData() {
         return new PlayerData(player.getGun().getCurrentSprite(), player.getHP(), player.isDead());
     }
 
-    private SpriteData renderSprite(Point pos, int spriteIndex, int spriteStageIndex){
+    private SpriteData renderSprite(Point pos, int spriteIndex, int spriteStageIndex) {
 
         double posInFOV;
 
-        Point vectorFromPlayer = new Point(pos.getX() - player.getxCoor(), -(pos.getY() - player.getyCoor()));
+        Vector vectorFromPlayer = new Vector(pos.x() - player.getxCoor(), -(pos.y() - player.getyCoor()));
 
-        double vectorFromPlayerAngle = Point.angleToXAxis(vectorFromPlayer);
+        double vectorFromPlayerAngle = Vector.angleToXAxis(vectorFromPlayer);
 
         double angleDiff = vectorFromPlayerAngle - player.getAngle();
 
-        if(player.getAngle() >= 0 && player.getAngle() < 90
-            && vectorFromPlayerAngle >= 270 && vectorFromPlayerAngle < 360){
+        if (player.getAngle() >= 0 && player.getAngle() < 90
+                && vectorFromPlayerAngle >= 270 && vectorFromPlayerAngle < 360) {
             angleDiff -= 360;
         }
 
         if (player.getAngle() >= 270 && player.getAngle() < 360
-            && vectorFromPlayerAngle >= 0 && vectorFromPlayerAngle < 90){
+                && vectorFromPlayerAngle >= 0 && vectorFromPlayerAngle < 90) {
             angleDiff += 360;
         }
 
         posInFOV = 0.5 - angleDiff / FOV;
-
-        //asi nejhorších 20 rádků co jsem kdy napsal
-
-        Point[] perpendiculars = Point.perpendicularVectors(vectorFromPlayer);
-
-        perpendiculars[0] = Point.changeMagnitude(perpendiculars[0], 32);
-        perpendiculars[1] = Point.changeMagnitude(perpendiculars[1], 32);
-
-        Point edge1 = Point.moveByVector(pos, perpendiculars[0]);
-        Point edge2 = Point.moveByVector(pos, perpendiculars[1]);
-
-        //double distToPlayer = Double.min(Point.distance(edge1, player.getCoordinates()), Point.distance(edge2, player.getCoordinates()));
 
         double distToPlayer = Point.distance(player.getCoordinates(), pos);
 
@@ -200,7 +189,7 @@ public class MainModel {
         return new SpriteData(distToPlayer, posInFOV, spriteStageIndex, spriteIndex);
     }
 
-    private RayData[] castRays(){
+    private RayData[] castRays() {
         double startAngle = player.getAngle() - (FOV / 2);
         //must be -1 to account for starting at 0
         double increment = FOV / (RESOLUTION - 1);
@@ -216,7 +205,7 @@ public class MainModel {
         return data;
     }
 
-    private boolean isInFinish(){
+    private boolean isInFinish() {
         return Point.distance(Map.centerOfTile(finishTile[0], finishTile[1]), player.getCoordinates()) < Map.getTILE_SIZE() / 2;
     }
 
@@ -236,15 +225,15 @@ public class MainModel {
         this.finishTile = finishTile;
     }
 
-    private void loadNextLevel(){
-        if (currentLevel > mapPaths.length - 1){
+    private void loadNextLevel() {
+        if (currentLevel > mapPaths.length - 1) {
             currentLevel = 0;
         }
         MapLoader.load(mapPaths[currentLevel], this);
         levelFinished = false;
     }
 
-    private void restart(){
+    private void restart() {
         MapLoader.load(mapPaths[0], this);
         currentLevel = 0;
     }

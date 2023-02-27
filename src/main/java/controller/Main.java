@@ -4,8 +4,6 @@ import com.jogamp.opengl.util.FPSAnimator;
 import model.MainModel;
 import view.Renderer;
 
-import java.awt.*;
-import java.util.Arrays;
 import java.util.concurrent.CyclicBarrier;
 
 public class Main {
@@ -13,7 +11,7 @@ public class Main {
     private final double FOV = 60;
 
     private MainModel model;
-    private Renderer renderer;
+    private final Renderer renderer;
     public CyclicBarrier barrier;
 
     public Main() {

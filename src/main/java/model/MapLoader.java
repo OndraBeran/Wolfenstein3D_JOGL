@@ -1,13 +1,10 @@
 package model;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class MapLoader {
@@ -30,7 +27,7 @@ public class MapLoader {
     private static final int TABLE = -4194112;
     private static final int WELL = -8323200;
 
-    public static void load(String path, MainModel model){
+    public static void load(String path, MainModel model) {
         URL url = MapLoader.class.getResource(path);
 
         try {
@@ -46,7 +43,7 @@ public class MapLoader {
 
                     map[y][x] = materialIndex(rgbValue);
 
-                    switch (rgbValue){
+                    switch (rgbValue) {
                         case START_CODE -> player = new Player((x + 0.5) * Map.getTILE_SIZE(), (y + 0.5) * Map.getTILE_SIZE(), 90, 60);
                         case SOLDIER_CODE -> enemyList.add(new Soldier((x + 0.5) * Map.getTILE_SIZE(), (y + 0.5) * Map.getTILE_SIZE()));
                         case END_CODE -> model.setFinishTile(new int[]{x, y});
@@ -76,34 +73,50 @@ public class MapLoader {
         }
     }
 
-    private static int materialIndex(int materialCode){
-        switch (materialCode){
+    private static int materialIndex(int materialCode) {
+        switch (materialCode) {
             case BSTONE -> {
                 return 1;
             }
-            case BSTONECELL -> {return 2;}
-            case GSTONE -> {return 3;}
-            case GSTONESLIME -> {return 4;}
-            case WOOD -> {return 5;}
-            case DOOR -> {return 6;}
+            case BSTONECELL -> {
+                return 2;
+            }
+            case GSTONE -> {
+                return 3;
+            }
+            case GSTONESLIME -> {
+                return 4;
+            }
+            case WOOD -> {
+                return 5;
+            }
+            case DOOR -> {
+                return 6;
+            }
         }
 
         return 0;
     }
 
-    private static SpriteObject createSpriteObject(int x, int y, int index){
+    private static SpriteObject createSpriteObject(int x, int y, int index) {
         Point tileCenter = Map.centerOfTile(x, y);
 
-        double xCoor = tileCenter.getX();
-        double yCoor = tileCenter.getY();
+        double xCoor = tileCenter.x();
+        double yCoor = tileCenter.y();
 
-        int spriteIndex = switch (index){
-            case ARMOR: yield 0;
-            case BARREL: yield 1;
-            case LAMP: yield 2;
-            case TABLE: yield 3;
-            case WELL: yield 4;
-            default: yield -1;
+        int spriteIndex = switch (index) {
+            case ARMOR:
+                yield 0;
+            case BARREL:
+                yield 1;
+            case LAMP:
+                yield 2;
+            case TABLE:
+                yield 3;
+            case WELL:
+                yield 4;
+            default:
+                yield -1;
         } + 10;
 
         return new SpriteObject(xCoor, yCoor, spriteIndex);

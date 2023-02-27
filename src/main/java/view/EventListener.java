@@ -23,9 +23,9 @@ public class EventListener implements GLEventListener {
     private final int SCREEN_WIDTH;
     private final int SCREEN_HEIGHT = 1080;
     private final double WALL_HEIGHT = 100;
-    private MainModel model;
+    private final MainModel model;
 
-    private CyclicBarrier barrier;
+    private final CyclicBarrier barrier;
 
     TextRenderer textRenderer;
 
@@ -88,13 +88,13 @@ public class EventListener implements GLEventListener {
 
         Graphics.clear(gl);
 
-        if (!gameStarted){
+        if (!gameStarted) {
             Graphics.drawImage(gl, introImg);
             setGameStarted(KeyListener.firstKeyPressed);
 
             //draw prompt
             Graphics.drawText(textRenderer, "press any key to start", Graphics.TextPos.CENTER_BOTTOM, promptColor);
-            if (System.currentTimeMillis() - lastChange > 500){
+            if (System.currentTimeMillis() - lastChange > 500) {
                 lastChange = System.currentTimeMillis();
                 promptColor = 1 - promptColor;
             }
@@ -114,7 +114,7 @@ public class EventListener implements GLEventListener {
                 double lastSpriteDist = i == 0 ? Double.MAX_VALUE : data.enemies()[i - 1].distance();
                 double currentSpriteDist = i == data.enemies().length ? Double.MIN_VALUE : data.enemies()[i].distance();
 
-                if (distToWall > currentSpriteDist && distToWall < lastSpriteDist){
+                if (distToWall > currentSpriteDist && distToWall < lastSpriteDist) {
                     double scale = scaleRay(distToWall);
 
                     ImageResource img;
@@ -126,13 +126,13 @@ public class EventListener implements GLEventListener {
 
                     boolean bright = data.rays()[j].intersectsXAxis();
 
-                    if (KeyInputData.isDrawWalls()){
+                    if (KeyInputData.isDrawWalls()) {
                         Graphics.drawTexturedRay(gl, img, SCREEN_WIDTH - 1 - j, scale, data.rays()[j].intersectCordInTile(), true);
                     }
                 }
             }
 
-            if (i != data.enemies().length){
+            if (i != data.enemies().length) {
                 double scale = scaleRay(data.enemies()[i].distance());
 
                 Graphics.drawSprite(gl, objectSprites[data.enemies()[i].orientatedSpriteIndex()][data.enemies()[i].spriteStage()], data.enemies()[i].posInFOV() * SCREEN_WIDTH, scale * SCREEN_HEIGHT, scale);
@@ -145,35 +145,28 @@ public class EventListener implements GLEventListener {
         //draw status
         Graphics.drawText(textRenderer, "HP: " + data.player().HP(), Graphics.TextPos.RIGHT, 1);
 
-        if (KeyInputData.isDebugging()){
-            //draw minimap
-            minimapUnits(gl);
-            Graphics.drawMinimap(gl, model.player, model.enemies);
-            defaultUnits(gl);
-        }
-
-        if (data.player().isDead()){
+        if (data.player().isDead()) {
             Graphics.fillScreen(gl, 0.7, 0, 0.1, deadScreenOpacity);
-            if (deadScreenOpacity < 1){
+            if (deadScreenOpacity < 1) {
                 deadScreenOpacity += 0.05;
             } else {
                 Graphics.drawText(textRenderer, "press r to restart", Graphics.TextPos.MIDDLE, 1);
             }
         }
 
-        if (data.state().levelFinished()){
+        if (data.state().levelFinished()) {
             transitionOngoing = true;
         }
 
-        if (transitionOngoing){
-            if (endLevelOpacity <= 1){
+        if (transitionOngoing) {
+            if (endLevelOpacity <= 1) {
                 Graphics.fillScreen(gl, 0, 0, 0, endLevelOpacity);
                 endLevelOpacity += 0.05;
             } else {
                 Graphics.fillScreen(gl, 0, 0, 0, newLevelOpacity);
                 newLevelOpacity -= 0.05;
 
-                if (newLevelOpacity <= 0){
+                if (newLevelOpacity <= 0) {
                     transitionOngoing = false;
                     endLevelOpacity = 0;
                     newLevelOpacity = 1;
@@ -197,11 +190,11 @@ public class EventListener implements GLEventListener {
 
     }
 
-    private double scaleRay(double rayLength){
+    private double scaleRay(double rayLength) {
         return 192 / rayLength;
     }
 
-    private void loadAssets(){
+    private void loadAssets() {
         CountDownLatch latch = new CountDownLatch(4);
 
         loadIntroImg(latch);
@@ -216,7 +209,7 @@ public class EventListener implements GLEventListener {
         }
     }
 
-    private void loadIntroImg(CountDownLatch latch){
+    private void loadIntroImg(CountDownLatch latch) {
         Thread loadIntroImg = new Thread(() -> {
             introImg = new ImageResource("/intro_graphic.jpg");
 
@@ -226,7 +219,7 @@ public class EventListener implements GLEventListener {
         loadIntroImg.start();
     }
 
-    private void loadTextures(CountDownLatch latch){
+    private void loadTextures(CountDownLatch latch) {
         Thread loadTexture = new Thread(() -> {
             textures = new ImageResource[6][2];
 
@@ -254,7 +247,7 @@ public class EventListener implements GLEventListener {
         loadTexture.start();
     }
 
-    private void loadSprites(CountDownLatch latch){
+    private void loadSprites(CountDownLatch latch) {
         Thread loadEnemies = new Thread(() -> {
             objectSprites = new ImageResource[15][];
 
@@ -294,7 +287,7 @@ public class EventListener implements GLEventListener {
         loadEnemies.start();
     }
 
-    private void loadGuns(CountDownLatch latch){
+    private void loadGuns(CountDownLatch latch) {
         Thread loadGuns = new Thread(() -> {
             gunSprites = new ImageResource[3];
 
@@ -308,7 +301,7 @@ public class EventListener implements GLEventListener {
         loadGuns.start();
     }
 
-    private void defaultUnits(GL2 gl){
+    private void defaultUnits(GL2 gl) {
         gl.glMatrixMode(GL2.GL_PROJECTION);
         gl.glLoadIdentity();
 
@@ -317,7 +310,7 @@ public class EventListener implements GLEventListener {
         gl.glMatrixMode(GL2.GL_MODELVIEW);
     }
 
-    private void minimapUnits(GL2 gl){
+    private void minimapUnits(GL2 gl) {
         gl.glMatrixMode(GL2.GL_PROJECTION);
         gl.glLoadIdentity();
 
@@ -326,7 +319,7 @@ public class EventListener implements GLEventListener {
         gl.glMatrixMode(GL2.GL_MODELVIEW);
     }
 
-    private void startGame(){
+    private void startGame() {
         ModelLoop.initLoop(model);
         ModelLoop.start();
 
@@ -342,8 +335,8 @@ public class EventListener implements GLEventListener {
         }
     }
 
-    private void setGameStarted(boolean started){
-        if (started){
+    private void setGameStarted(boolean started) {
+        if (started) {
             startGame();
         }
         gameStarted = started;

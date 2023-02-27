@@ -20,7 +20,7 @@ public class AudioPlayer {
     private static MainModel model;
     private static CyclicBarrier barrier;
 
-    public static void init(MainModel model){
+    public static void init(MainModel model) {
         AudioPlayer.model = model;
         AudioPlayer.barrier = model.barrier;
 
@@ -38,7 +38,7 @@ public class AudioPlayer {
         dying = TinySound.loadSound(urlDying);
     }
 
-    public static void start(){
+    public static void start() {
         //start theme
         Thread themeThread = new Thread(() -> {
             theme.play(true, 0.75);
@@ -46,7 +46,7 @@ public class AudioPlayer {
         themeThread.start();
 
         Thread audio = new Thread(() -> {
-            while (true){
+            while (true) {
                 playSounds(getData());
                 try {
                     barrier.await();
@@ -61,26 +61,26 @@ public class AudioPlayer {
         audio.start();
     }
 
-    private static SoundData getData(){
+    private static SoundData getData() {
         SoundData data = model.writingToFirst.get() ? model.soundData2 : model.soundData1;
 
         return data;
     }
 
-    private static void playSounds(SoundData data){
-        if (data.gunshot()){
+    private static void playSounds(SoundData data) {
+        if (data.gunshot()) {
             new Thread(() -> {
                 gunshot.play();
             }).start();
         }
 
-        if (data.achtung()){
+        if (data.achtung()) {
             new Thread(() -> {
                 achtung.play();
             }).start();
         }
 
-        if (data.dying()){
+        if (data.dying()) {
             new Thread(() -> {
                 dying.play();
             }).start();
